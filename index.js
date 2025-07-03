@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 // Importing environment variables
 import dotenv from 'dotenv';
+import eventRouter from './routes/eventRouter.js';
 dotenv.config();
 
 const app = express();
@@ -11,16 +12,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-//get all places
-app.get('/places', async (req, res) => {
-  try {
-    const places = await mongoose.connection.db.collection('places').find({}).toArray();
-    res.json(places);
-  } catch (error) {
-    console.error('Error fetching places:', error);
-    res.status(500).send('Internal Server Error');
-  }
-});
+app.use('/event',eventRouter);
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
