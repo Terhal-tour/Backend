@@ -1,7 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import './cron/deleteInactiveUsers.js';
 
 import authRoutes from './routes/authRoutes.js';
 import favouriteRoutes from './routes/place-routes/FavouritePlace.Route.js';
