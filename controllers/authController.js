@@ -1,8 +1,9 @@
+// controllers/authController.js
 import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../services/tokenService.js';
 
-//  Register a new user
+// Register
 export const register = async (req, res) => {
   try {
     const { name, email, password, mobile, nationality, language } = req.body;
@@ -19,13 +20,13 @@ export const register = async (req, res) => {
   }
 };
 
-// Login a user
+// Login
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid email or password" });
+    const user = await User.findOne({ email, isDeleted: false });
+    if (!user) return res.status(400).json({ message: "Invalid email, password, or account deactivated" });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid email or password" });

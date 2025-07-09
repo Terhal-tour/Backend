@@ -1,4 +1,3 @@
-// cron/deleteInactiveUsers.js
 import cron from 'node-cron';
 import User from '../models/User.js';
 import Favorite from '../models/Favorite.js';
@@ -13,17 +12,17 @@ function logToFile(message) {
   fs.appendFileSync(logFile, `[${now}] ${message}\n`);
 }
 
-cron.schedule('0 2 * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   logToFile('Starting cleanup of deactivated accounts');
-  const THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000;
-  const cutoffDate = new Date(Date.now() - THIRTY_DAYS);
+  const ONE_HOUR = 1 * 60 * 60 * 1000;
+  const cutoffDate = new Date(Date.now() - ONE_HOUR);
 
   const inactiveUsers = await User.find({
     isDeleted: true,
     updatedAt: { $lte: cutoffDate },
   });
 
-  logToFile(`Found${inactiveUsers.length} Deactivated account`);
+  logToFile(`Found ${inactiveUsers.length} deactivated accounts`);
 
   for (const user of inactiveUsers) {
     await Favorite.deleteMany({ userId: user._id });
