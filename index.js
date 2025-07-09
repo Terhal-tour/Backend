@@ -1,7 +1,11 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import './cron/deleteInactiveUsers.js';
+import http from 'http';
+import { Server } from 'socket.io';
+import redisClient from './lib/redisClient.js';
 
 import authRoutes from './routes/authRoutes.js';
 import favouriteRoutes from './routes/place-routes/FavouritePlace.Route.js';
@@ -13,10 +17,10 @@ import adminAuthRouter from './routes/adminAuthRoutes.js';
 import historyRoutes from './routes/user-routes/history.route.js';
 import deleteRoutes from './routes/user-routes/deleteUser.route.js';
 import favoriteRoutes from './routes/user-routes/favorite.route.js';
+import adminStatsRoutes from './routes/adminStats.routes.js';
 
+import { initUserSocket } from './sockets/userSocket.js';
 
-
-dotenv.config();
 
 const app = express();
 const port = 3000;
@@ -27,38 +31,38 @@ app.get('/', (req, res) => {
 });
 
 app.use('/auth', authRoutes);
-app.use('/auth/admin',adminAuthRouter);
+app.use('/auth/admin', adminAuthRouter);
 app.use('/admin', adminRouter);
-// [MODIFIED] /places/suggested endpoint is now available for both anonymous and registered users
-// favourite routes
 app.use("/places", favouriteRoutes);
-
-// Use the rating route
 app.use("/places", ratingRoutes);
 app.use("/places", placeRoutes);
-
-//  event routes
-app.use("/events",eventRouter);
-
-// user routes 
+app.use("/events", eventRouter);
 app.use('/user', historyRoutes);
 app.use('/user', deleteRoutes);
 app.use('/user', favoriteRoutes);
+app.use('/admin/stats', adminStatsRoutes);
 
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: '*' }
+});
 
-
+initUserSocket(io);
 
 console.log("MONGO_URI =", process.env.MONGO_URI);
 
+(async () => {
+  try {
+    await redisClient.connect();
+    console.log('Connected to Redis');
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => {
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
-    app.listen(port, () => {
+
+    server.listen(port, () => {
       console.log(`Server is running at http://localhost:${port}`);
     });
-  })
-  .catch((err) => {
-    console.error('MongoDB connection error:', err);
-  });
-
+  } catch (err) {
+    console.error('Startup error:', err);
+  }
+})();
