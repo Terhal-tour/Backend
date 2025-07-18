@@ -1,49 +1,32 @@
-import stripe from '../utils/stripe.js';
-import Payment from '../models/Payment.js';
+// services/payment.service.js
+import Stripe from "stripe";
 
-// Create Stripe Checkout Session
-export const createCheckoutSession = async ({ userId, placeId, amount }) => {
-  // Create session in Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+/**
+ * Creates a Stripe Checkout Session for donations.
+ * @param {number} amount - Amount in USD dollars.
+ * @returns {Promise<string>} session URL.
+ */
+export const createStripeCheckoutSession = async (amount) => {
   const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
+    payment_method_types: ["card"],
+    mode: "payment",
     line_items: [
       {
         price_data: {
-          currency: 'usd',
+          currency: "usd",
           product_data: {
-            name: 'Place Booking',
+            name: "Support Us Donation",
           },
-          unit_amount: amount * 100, // Stripe expects amount in cents
+          unit_amount: amount * 100, // Stripe uses cents
         },
         quantity: 1,
       },
     ],
-    mode: 'payment',
-    success_url: `${process.env.CLIENT_URL}/payment/success`,
-    cancel_url: `${process.env.CLIENT_URL}/payment/cancel`,
-    metadata: {
-      userId,
-      placeId,
-    },
-  });
-
-  // Save payment in DB (status is pending)
-  await Payment.create({
-    userId,
-    placeId,
-    amount,
-    status: 'pending',
+    success_url: `${process.env.CLIENT_URL}/payment-success`,
+    cancel_url: `${process.env.CLIENT_URL}/payment-cancel`,
   });
 
   return session.url;
-};
-
-// Confirm payment after success
-export const confirmPayment = async ({ userId, placeId }) => {
-  // Update latest pending payment to 'paid'
-  await Payment.findOneAndUpdate(
-    { userId, placeId, status: 'pending' },
-    { status: 'paid' },
-    { new: true }
-  );
 };
