@@ -1,42 +1,23 @@
-import { createCheckoutSession, confirmPayment } from '../services/paymentService.js';
+// controllers/payment.controller.js
+import { createStripeCheckoutSession } from "../services/paymentService.js";
 
-// Create Stripe checkout session
-export const handleCheckout = async (req, res) => {
+/**
+ * Handle donation checkout session creation.
+ * POST /payment/checkout
+ */
+export const handleCreateCheckoutSession = async (req, res) => {
   try {
-    const { placeId, amount } = req.body;
+    const { amount } = req.body;
 
-    // Use req.user._id from the verified token
-    const userId = req.user.id;
+    if (!amount || amount < 1) {
+      return res.status(400).json({ message: "Invalid donation amount." });
+    }
 
-    // Call service to create Stripe session
-    const checkoutUrl = await createCheckoutSession({ userId, placeId, amount });
+    const sessionUrl = await createStripeCheckoutSession(amount);
 
-    // Respond with the URL
-    res.status(200).json({ url: checkoutUrl });
+    res.json({ url: sessionUrl });
   } catch (error) {
-    console.error('Checkout Error:', error);
-    res.status(500).json({ error });
-    // res.status(500).json({ message: 'Failed to initiate payment.' });
-    console.log("Authenticated user:", req.user);
+    console.error("Stripe Payment Error:", error);
+    res.status(500).json({ message: "Payment session creation failed." });
   }
-};
-
-// Handle success redirect from Stripe
-export const handleSuccess = async (req, res) => {
-  try {
-    const { userId, placeId } = req.query;
-
-    // Confirm the payment in DB
-    await confirmPayment({ userId, placeId });
-
-    res.status(200).json({ message: 'Payment successful.' });
-  } catch (error) {
-    console.error('Payment Success Error:', error);
-    res.status(500).json({ message: 'Failed to confirm payment.' });
-  }
-};
-
-// Handle cancel redirect
-export const handleCancel = (req, res) => {
-  res.status(200).json({ message: 'Payment was cancelled.' });
 };
