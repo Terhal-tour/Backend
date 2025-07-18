@@ -19,7 +19,7 @@ export const createStripeCheckoutSession = async (amount) => {
           product_data: {
             name: "Support Us Donation",
           },
-          unit_amount: amount * 100, // Stripe uses cents
+          unit_amount: amount * 100, 
         },
         quantity: 1,
       },
