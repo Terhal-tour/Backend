@@ -30,7 +30,7 @@ export const reactivateUser = async (email, password) => {
     throw new Error('User not found.');
   }
 
-  if (user.isActive) {
+  if (!user.isDeleted) {
     throw new Error('Account is already active.');
   }
 
@@ -40,10 +40,10 @@ export const reactivateUser = async (email, password) => {
   }
 
   // Reactivate
-  user.isActive = true;
+  user.isDeleted = false;
   await user.save();
 
-  return user; // ترجع المستخدم لو أردت استخدامه بعد ذلك
+  return user;
 };
 
 export const permanentlyDeleteUser = async (userId, password) => {
