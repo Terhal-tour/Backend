@@ -26,12 +26,15 @@ export const ratePlace = async (userId, placeId, ratingValue) => {
       placeId,
       rating: ratingValue,
     });
+   
   }
 
   const allRatings = await Rating.find({ placeId });
   const avgRating = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length;
 
   place.rating = avgRating;
+  console.log();
+  
   await place.save();
 
   return { message: "Rating saved", newRating: ratingValue, avgRating };
@@ -45,6 +48,7 @@ export const getPlaceRating = async (placeId) => {
 
   // ✅ 2️⃣ Get all ratings for the place
   const ratings = await Rating.find({ placeId });
+console.log(ratings);
 
   // ✅ 3️⃣ Calculate average rating
   let avgRating = null;
@@ -53,6 +57,7 @@ export const getPlaceRating = async (placeId) => {
     const sum = ratings.reduce((total, r) => total + Number(r.rating || 0), 0);
     avgRating = sum / ratings.length;
   }
+console.log(avgRating);
 
   return {
     avgRating: avgRating !== null ? Number(avgRating.toFixed(1)) : null,

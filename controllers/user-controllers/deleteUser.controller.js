@@ -28,6 +28,7 @@ export const reactivateUserAccount = async (req, res) => {
     }
 
     const user = await reactivateUser(email, password);
+console.log("user",user);
 
     res.json({ success: true, message: 'Account has been reactivated.' });
   } catch (err) {
