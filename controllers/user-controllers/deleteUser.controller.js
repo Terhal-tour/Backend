@@ -18,22 +18,23 @@ export const deleteUserAccount = async (req, res) => {
   }
 };
 
+
 export const reactivateUserAccount = async (req, res) => {
   try {
-    const userId = req.user.id;
-    const { password } = req.body;
+    const { email, password } = req.body;
 
-    if (!password) {
-      return res.status(400).json({ success: false, message: 'Password is required.' });
+    if (!password || !email) {
+      return res.status(400).json({ success: false, message: 'Email and password are required.' });
     }
 
-    await reactivateUser(userId, password, userId);
+    const user = await reactivateUser(email, password);
 
     res.json({ success: true, message: 'Account has been reactivated.' });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
   }
 };
+
 
 
 export const hardDeleteUserAccount = async (req, res) => {
