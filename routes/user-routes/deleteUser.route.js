@@ -6,6 +6,6 @@ import { authMiddleware } from '../../middlewares/authMiddleware.js';
 const router = express.Router();
 
 router.delete('/soft-delete', authMiddleware, deleteUserAccount);
-router.post('/reactivate-account', authMiddleware, reactivateUserAccount);
+router.post('/reactivate-account', reactivateUserAccount);
 router.delete('/hard-delete', authMiddleware, hardDeleteUserAccount); 
 export default router;
