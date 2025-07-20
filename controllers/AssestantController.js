@@ -19,7 +19,7 @@ export const chatWithAssistant = async (req, res) => {
 
     const jsonReply = JSON.parse(cleaned);
 
-    res.json(jsonReply); 
+    res.status(200).json(jsonReply); 
   } catch (error) {
     console.error('Chat error:', error);
     res.status(500).json({ error: 'Something went wrong' });

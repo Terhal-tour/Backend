@@ -7,3 +7,4 @@ const router = express.Router();
 router.get('/history', authMiddleware, viewUserHistory);
 
 export default router;
+
