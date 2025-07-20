@@ -27,7 +27,7 @@ export const createReview = async (req, res) => {
 export const getAllReviews = async (req, res) => {
   try {
     const reviews = await Review.find().populate('userId', 'name email');
-    res.status(200).json({ success: true, reviews });
+    res.json({ success: true, reviews });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -39,7 +39,7 @@ export const getMyReview = async (req, res) => {
     const userId = req.user.id;
     const review = await Review.findOne({ userId });
     if (!review) return res.status(404).json({ message: 'No review found.' });
-    res.status(200).json({ success: true, review });
+    res.json({ success: true, review });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -65,7 +65,7 @@ export const updateReview = async (req, res) => {
       reviewDoc.review = review;
     }
     await reviewDoc.save();
-    res.status(200).json({ success: true, review: reviewDoc });
+    res.json({ success: true, review: reviewDoc });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }
@@ -77,7 +77,7 @@ export const deleteReview = async (req, res) => {
     const userId = req.user.id;
     const review = await Review.findOneAndDelete({ userId });
     if (!review) return res.status(404).json({ message: 'Review not found.' });
-    res.status(200).json({ success: true, message: 'Review deleted.' });
+    res.json({ success: true, message: 'Review deleted.' });
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
   }

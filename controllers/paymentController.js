@@ -15,7 +15,7 @@ export const handleCreateCheckoutSession = async (req, res) => {
 
     const sessionUrl = await createStripeCheckoutSession(amount);
 
-    res.status(200).json({ url: sessionUrl });
+    res.json({ url: sessionUrl });
   } catch (error) {
     console.error("Stripe Payment Error:", error);
     res.status(500).json({ message: "Payment session creation failed." });

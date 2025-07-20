@@ -132,7 +132,7 @@ export const handleGetPlaceById = async (req, res) => {
     const suggestions = await suggestionsQuery;
     const totalSuggestions = await Place.countDocuments(suggestionQuery);
 
-    res.status(200).json({ 
+    res.json({ 
       success: true, 
       data: place,
       suggestions: {
