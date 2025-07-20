@@ -91,7 +91,7 @@ export const ratePlaceController = async (req, res) => {
     const result = await ratePlace(userId, placeId, rating);
     res.status(201).json(result);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -102,7 +102,7 @@ export const getPlaceRatingController = async (req, res) => {
     const result = await getPlaceRating(placeId);
     res.status(200).json(result);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -114,7 +114,7 @@ export const getUserRatingForPlaceController = async (req, res) => {
     const result = await getUserRatingForPlace(userId, placeId);
     res.status(200).json(result);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -126,6 +126,6 @@ export const deleteUserRatingController = async (req, res) => {
     const result = await deleteUserRating(userId, placeId);
     res.status(200).json(result);
   } catch (err) {
-    res.status(404).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };

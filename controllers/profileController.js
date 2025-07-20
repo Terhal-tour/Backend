@@ -5,8 +5,7 @@ export const getUser=async (req, res) =>{
     const user = await getUserProfile(req.user.id);
     res.status(200).json({ user });
   } catch (err) {
-    res.status(404).json({ message: err.message });
-  }
+res.status(500).json({ message: 'Internal Server Error', error: err.message });  }
 }
 // Update user profile
 export const updateUser = async (req, res) => {
@@ -18,7 +17,6 @@ export const updateUser = async (req, res) => {
     const updatedUser = await updateUserProfile(req.user.id, req.body, imagePath);
     res.status(200).json({ message: 'Profile updated', user: updatedUser });
   } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+res.status(500).json({ message: 'Internal Server Error', error: err.message });  }
 }
   

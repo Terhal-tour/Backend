@@ -19,7 +19,7 @@ export const addToFavourites = async (req, res) => {
       favourite,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -33,7 +33,7 @@ export const getFavouritesByUserIdController = async (req, res) => {
       favourites,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 export const removeFavouriteController = async (req, res) => {
@@ -47,7 +47,7 @@ export const removeFavouriteController = async (req, res) => {
       result,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 export const isPlaceFavouritedController = async (req, res) => {
@@ -61,7 +61,7 @@ export const isPlaceFavouritedController = async (req, res) => {
       isFavourited,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -89,6 +89,6 @@ export const deleteFavouritesByUserIdController = async (req, res) => {
       result,
     });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };

@@ -17,7 +17,7 @@ export const getAllEvents = async (req, res) => {
         const events = userId ? await getEarlyEvents(req.query) : { "message": "You need to login first" };
         res.status(200).json(events);
     } catch (error) {
-        res.status(400).json({ "message": error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 }
 
@@ -42,7 +42,7 @@ export const getEventById = async (req, res) => {
 
         res.status(200).json(event);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 };
 
@@ -58,7 +58,8 @@ export const createEvent = async (req, res) => {
 
         res.status(201).json(event);
     } catch (error) {
-res.status(500).json({ message: 'Internal Server Error', error: err.message });    }
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    }
 };
 
 export const updateEvent = async (req, res) => {

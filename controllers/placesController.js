@@ -1,4 +1,4 @@
-import { searchPlaces, getTopPlaces ,getPlaceById, getPlaces } from "../services/palcesService.js";
+import { searchPlaces, getTopPlaces, getPlaceById, getPlaces } from "../services/palcesService.js";
 import Place from "../models/Place.js";
 import { getFavouritesByUserId } from "../services/place-services/favouritePlace.service.js";
 import { getPlacesNearby } from "../services/palcesService.js"; // [MODIFIED] Import the new service
@@ -73,9 +73,9 @@ export const handleSuggestedOrAllPlaces = async (req, res) => {
       const suggestedPlaces = await placesQuery;
       // Count total for pagination
       const total = await Place.countDocuments(query);
-      return res.status(200).json({ 
-        suggested: true, 
-        categories: categories.length > 0 ? categories : null, 
+      return res.status(200).json({
+        suggested: true,
+        categories: categories.length > 0 ? categories : null,
         places: suggestedPlaces,
         pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
       });
@@ -85,8 +85,8 @@ export const handleSuggestedOrAllPlaces = async (req, res) => {
       const query = { visible: true };
       const places = await Place.find(query).skip(skip).limit(limit);
       const total = await Place.countDocuments(query);
-      return res.status(200).json({ 
-        suggested: false, 
+      return res.status(200).json({
+        suggested: false,
         places,
         pagination: { page, limit, total, totalPages: Math.ceil(total / limit) }
       });
@@ -100,8 +100,8 @@ export const handleSuggestedOrAllPlaces = async (req, res) => {
 export const handleGetPlaceById = async (req, res) => {
   try {
     const userId = req.user.id;
-    console.log(userId,"user");
-    
+    console.log(userId, "user");
+
     if (!userId) {
       return res.status(401).json({ success: false, message: 'Unauthorized' });
     }
@@ -132,8 +132,8 @@ export const handleGetPlaceById = async (req, res) => {
     const suggestions = await suggestionsQuery;
     const totalSuggestions = await Place.countDocuments(suggestionQuery);
 
-    res.json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       data: place,
       suggestions: {
         places: suggestions,
@@ -189,5 +189,6 @@ export const getAllPlaces = async (req, res) => {
     const places = await getPlaces(req.query);
     res.status(200).json(places);
   } catch (error) {
-res.status(500).json({ message: 'Internal Server Error', error: err.message });  }
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
+  }
 };

@@ -591,7 +591,145 @@ Same fields as POST.
 
  
 
+#### traveller routes    must be logedin as traveller
+ ##  Places (Traveller only)
 
+### `POST /places/:id/favourite`
+Add place to favourites.
+
+| Status Code | Description     |
+|-------------|-----------------|
+| `201`       | Place added to favourites         |
+| `400`       | Server error    |
+
+---
+
+### `GET /places/favourites`
+Get all favourite places.
+
+| Status Code | Description     |
+|-------------|-----------------|
+| `200`       | Favourites retrieved successfully         |
+| `500`       | Server error    |
+
+---
+
+### `DELETE /places/:id/favourite`
+Remove place from favourites.
+
+| Status Code | Description     |
+|-------------|-----------------|
+| `200`       | Favourite removed successfully         |
+| `500`       | Server error    |
+
+---
+
+### `DELETE /places/favourites`
+Remove all favourites.
+
+| Status Code | Description                         |
+|-------------|-------------------------------------|
+| `200`       | All favourites deleted successfully |
+| `500`       | Error                               |
+
+---
+
+### `GET /places/:id/is-favourited`
+Check if a place is favourited.
+
+| Status Code | Description |
+|-------------|-------------|
+| `200`       | Check completed     |
+| `500`       | Error       |
+
+---
+
+### `GET /places/:id`
+Get place details.
+
+| Status Code | Description        |
+|-------------|--------------------|
+| `200`       | Success            |
+| `401`       | Unauthorized       |
+| `404`       | Place not found    |
+| `500`       | Server error       |
+
+---
+
+### `GET /places/:id/rate`
+Get place rating.
+
+| Status Code | Description |
+|-------------|-------------|
+| `201`       | Success     |
+| `500`       | Error       |
+
+---
+
+### `GET /places/nearby`
+Get nearby places based on coordinates.
+
+| Status Code | Description |
+|-------------|-------------|
+| `200`       | Success     |
+| `500`       | Something went wrong       |
+
+---
+
+## 🎟️ Events
+
+### `GET /events`
+Get all events.
+
+| Status Code | Description |
+|-------------|-------------|
+| `200`       | Success     |
+| `500`       | Error       |
+
+---
+
+### `GET /events/:id`
+Get event details.
+
+| Status Code | Description               |
+|-------------|---------------------------|
+| `200`       | Success                   |
+| `400`       | Event ID is required      |
+| `401`       | You need to login first   |
+| `404`       | Event not found           |
+| `500`       | Server error              |
+
+---
+
+## 👤 Profile
+
+### `GET /profile/me`
+Get current user profile.
+
+| Status Code | Description |
+|-------------|-------------|
+| `200`       | Success     |
+| `500`       | Server Error   |
+
+---
+
+### `PUT /profile/update`
+Update user profile.
+
+**Optional Fields in Body:**
+- `email: string`
+- `password: string` (min 6)
+- `mobile: string`
+- `nationality: string`
+- `language: enum`
+- `lastLat: number`
+- `lastLng: number`
+- `image: file or URL`
+
+| Status Code | Description |
+|-------------|-------------|
+| `200`       | Success     |
+| `500`       | Error       |
 #   Public & User API Endpoints
 
 ##   Anonymous User Routes
