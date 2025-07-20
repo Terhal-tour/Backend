@@ -5,7 +5,7 @@ export const getLimitEarlyActiveEvents = async (req, res) => {
         const events = await getEarlyActiveEvents(req.query);
         res.status(200).json(events);
     } catch (error) {
-        res.status(400).json({ "message": error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 }
 export const getAllEvents = async (req, res) => {
@@ -58,8 +58,7 @@ export const createEvent = async (req, res) => {
 
         res.status(201).json(event);
     } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+res.status(500).json({ message: 'Internal Server Error', error: err.message });    }
 };
 
 export const updateEvent = async (req, res) => {
@@ -82,7 +81,7 @@ export const updateEvent = async (req, res) => {
 
         res.status(200).json(updatedEvent);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 };
 
@@ -102,6 +101,6 @@ export const deleteEvent = async (req, res) => {
 
         res.status(200).json({ message: "Event deleted successfully", event: deletedEvent });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 };

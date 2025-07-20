@@ -189,6 +189,5 @@ export const getAllPlaces = async (req, res) => {
     const places = await getPlaces(req.query);
     res.status(200).json(places);
   } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+res.status(500).json({ message: 'Internal Server Error', error: err.message });  }
 };

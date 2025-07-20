@@ -9,8 +9,7 @@ export const createPlace = async (req, res) => {
     const newPlace = await placeService.createPlace(req.body);
     res.status(201).json(newPlace);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to create place', error: err.message });
-  }
+res.status(500).json({ message: 'Internal Server Error', error: err.message });  }
 };
 
 // Controller to handle updating an existing place
@@ -20,9 +19,9 @@ export const updatePlace = async (req, res) => {
     if (!updatedPlace) {
       return res.status(404).json({ message: 'Place not found' });
     }
-    res.json(updatedPlace);
+    res.status(200).json(updatedPlace);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to update place', error: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 //  Controller to handle toggling the visibility of a place (soft delete)
@@ -32,9 +31,9 @@ export const toggleVisibility = async (req, res) => {
     if (!place) {
       return res.status(404).json({ message: 'Place not found' });
     }
-    res.json({ message: 'Visibility toggled', visible: place.visible });
+    res.status(200).json({ message: 'Visibility toggled', visible: place.visible });
   } catch (err) {
-    res.status(500).json({ message: 'Failed to toggle visibility', error: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 

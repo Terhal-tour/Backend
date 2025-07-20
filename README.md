@@ -51,9 +51,10 @@ Content-Type: application/json
 ```json
 {
   "message": "Registration successful. Please check your email to verify."
+  
 }
 ```
-
+ 
 ###  Error Response
 
 | Status Code | Description           |
@@ -102,7 +103,10 @@ Content-Type: application/json
 ```json
 {
   "message": "Login successful",
-  "token": "JWT_TOKEN_HERE"
+  "token": "JWT_TOKEN_HERE",
+  "user":{
+    
+  }
 }
 ```
 
@@ -111,6 +115,9 @@ Content-Type: application/json
 | Status Code | Description           |
 | ----------- | --------------------- |
 | `500`       | Internal server error |
+| `400`       | Invalid email, password, or account deactivated|
+| `400`       | Invalid email, password, or account deactivated|
+| `403`       | Please verify your email first|
 
 ---
 
@@ -153,7 +160,7 @@ Content-Type: application/json
 
 | Status Code | Description                     |
 | ----------- | ------------------------------- |
-| `400`       | Invalid request or server error |
+| `500`       | Internal Server Error |
 
 ---
 
@@ -190,11 +197,11 @@ Content-Type: application/json
 
 | Status Code | Description                                |
 | ----------- | ------------------------------------------ |
-| `201`       | Registration successful and email verified |
+| `200`       | Email verified successfully |
 
 ```json
 {
-  "message": "Registration successful. Please check your email to verify."
+  "message": "Email verified successfully"
 }
 ```
 
@@ -203,6 +210,7 @@ Content-Type: application/json
 | Status Code | Description           |
 | ----------- | --------------------- |
 | `500`       | Internal server error |
+| `400`       | Invalid or expired verification token |
 
 ---
 
@@ -299,7 +307,8 @@ Content-Type: application/json
 | Status Code | Description             |
 | ----------- | ----------------------- |
 | `201`       | Admin created           |
-| `400`       | Validation/server error |
+| `400`       | Only super admin can create admin |
+| `500`       | Internal Server Error     |
 
 ---
 
@@ -321,7 +330,9 @@ Content-Type: application/json
 | Status Code | Description   |
 | ----------- | ------------- |
 | `201`       | Admin updated |
-| `400`       | Server error  |
+| `400`       | Only super admin can update admin  |
+| `404`       | Admin not found |
+| `500`       | Internal Server Error |
 
 ---
 
@@ -340,7 +351,10 @@ Content-Type: application/json
 | Status Code | Description                |
 | ----------- | -------------------------- |
 | `200`       | Admin deleted successfully |
-| `400`       | Server error               |
+| `400`       | Only super admin can delete admin |
+| `404`       | Admin not found |
+| `500`       | Internal Server Error|
+
 
 ---
 
@@ -380,7 +394,7 @@ Content-Type: application/json
 | Status Code | Description  |
 | ----------- | ------------ |
 | `201`       | Success      |
-| `400`       | Server error |
+| `500`       | Internal Server Error |
 
 ---
 
@@ -403,7 +417,7 @@ Same fields as the POST request.
 | Status Code | Description |
 | ----------- | ----------- |
 | `200`       | Success     |
-| `500`       | Error       |
+| `500`       |Internal Server Error       |
 
 ---
 
@@ -422,6 +436,7 @@ Same fields as the POST request.
 | Status Code | Description        |
 | ----------- | ------------------ |
 | `200`       | Visibility toggled |
+| `404`       |Place not found     |
 | `500`       | Server error       |
 
 ---
@@ -450,8 +465,8 @@ Same fields as the POST request.
 | Status Code | Description |
 | ----------- | ----------- |
 | `201`       | Success     |
-| `401`       | Login first |
-| `400`       | Error       |
+| `401`       | You need to login first |
+| `500`       | Internal Server Error       |
 
 ---
 
@@ -469,7 +484,7 @@ Same fields as POST.
 | ----------- | --------------- |
 | `200`       | Success         |
 | `401`       | Login first     |
-| `400`       | Error           |
+| `500`       | Error           |
 | `404`       | Event not found |
 
 ---
@@ -478,9 +493,9 @@ Same fields as POST.
 
 | Status Code | Description |
 | ----------- | ----------- |
-| `200`       | Success     |
-| `400`       | Error       |
-| `404`       | Not found   |
+| `200`       | Event deleted successfully     |
+| `404`       | not found   |
+| `500`       | Error       |
 
 ---
 
@@ -501,8 +516,8 @@ Same fields as POST.
 | Status Code | Description  |
 | ----------- | ------------ |
 | `201`       | Success      |
-| `401`       | Unauthorized |
-| `400`       | Error        |
+| `401`       | You need to login first |
+| `500`       | Internal Server Error        |
 
 ---
 
@@ -519,8 +534,9 @@ Same fields as POST.
 | Status Code | Description  |
 | ----------- | ------------ |
 | `200`       | Success      |
-| `401`       | Unauthorized |
-| `400`       | Error        |
+| `401`       | You need to login first |
+| `400`       | Category cannot be updated because it is linked to existing places or doesn't exist.        |
+| `500`       | Internal Server Error        |
 
 ---
 
@@ -530,10 +546,10 @@ Same fields as POST.
 
 | Status Code | Description                       |
 | ----------- | --------------------------------- |
-| `200`       | Success                           |
-| `400`       | Cannot delete – related to places |
-| `401`       | Unauthorized                      |
-| `500`       | Server error                      |
+| `200`       | Category deleted successfully                           |
+| `400`       | Category cannot be deleted, it may not exist or is linked to places |
+| `401`       | You need to login first                      |
+| `500`       | Internal Server Error                      |
 
 ---
 
@@ -589,7 +605,7 @@ Same fields as POST.
 | Status Code | Description |
 |-------------|-------------|
 | `200`       | Success     |
-| `400`       | Error       |
+| `500`       | Error       |
 
 ---
 
@@ -635,7 +651,7 @@ Same fields as POST.
 | Status Code | Description |
 |-------------|-------------|
 | `200`       | Success     |
-| `400`       | Error       |
+| `500`       | Error       |
 
 ---
 
@@ -677,7 +693,7 @@ Same fields as POST.
 
 | Name     | Type     | Required | Description          |
 | -------- | -------- | -------- | -------------------- |
-| `amount` | `number` |   Yes    | Payment amount (EGP) |
+| `amount` | `number` |   Yes    | Payment amount  |
 
 ####   Example
 
@@ -692,8 +708,8 @@ Same fields as POST.
 | Status Code | Description   |
 | ----------- | ------------- |
 | `200`       | Success       |
-| `400`       | Invalid input |
-| `500`       | Server error  |
+| `400`       | Invalid donation amount. |
+| `500`       | Payment session creation failed. |
 
 ---
 
@@ -709,5 +725,8 @@ Same fields as POST.
 | Status Code | Description |
 | ----------- | ----------- |
 | `200`       | Success     |
-| `500`       | Error       |
+| `500`       | Something went wrong       |
+
+
+
 

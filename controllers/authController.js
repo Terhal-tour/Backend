@@ -42,7 +42,8 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "Registration successful. Please check your email to verify.",user });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+       res.status(500).json({ message: 'Internal Server Error', error: err.message });
+
   }
 };
 
@@ -66,7 +67,7 @@ export const verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+     res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
@@ -101,7 +102,8 @@ export const login = async (req, res) => {
       }
     });
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+
   }
 };
 
@@ -112,7 +114,8 @@ export const forgetPassword = async (req, res) => {
     const message = await handleForgetPassword(req.body.email);
     res.status(200).json({ message });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+
   }
 };
 // Handle reset password

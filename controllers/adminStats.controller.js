@@ -9,35 +9,35 @@ import {
 export const getOverviewStats = async (req, res) => {
   try {
     const data = await getOverviewStatsService();
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
 export const getNationalitiesStats = async (req, res) => {
   try {
     const data = await getNationalitiesStatsService();
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
 export const getTopRatedPlaces = async (req, res) => {
   try {
     const data = await getTopRatedPlacesService();
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
 
 export const getReviewsAnalysis = async (req, res) => {
   try {
     const data = await getReviewsAnalysisService();
-    res.json(data);
+    res.status(200).json(data);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: 'Internal Server Error', error: err.message });
   }
 };
