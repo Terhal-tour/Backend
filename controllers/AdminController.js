@@ -1,14 +1,24 @@
 import {
   addAdminService,
   updateAdminService,
-  deleteAdminService
+  deleteAdminService,
+  getAdminsService
 } from '../services/adminService.js';
+
+export const getAllAdmins = async (req, res) => {
+  try {
+    const admins = await getAdminsService();
+    res.status(200).json(admins);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export const addAdmin = async (req, res) => {
   try {
     const newAdmin = await addAdminService(req.body);
     console.log(newAdmin);
-    
+
     res.status(201).json(newAdmin);
   } catch (error) {
     res.status(400).json({ message: error.message });

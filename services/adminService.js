@@ -1,5 +1,8 @@
 import Admin from '../models/Admin.js';
 
+export const getAdminsService = async () => {
+  return await Admin.find();
+};
 export const addAdminService = async (data) => {
   const { name, email, password, isSuper  } = data;
 

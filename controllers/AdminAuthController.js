@@ -19,7 +19,7 @@ export const login = async (req, res) => {
 
     const token = generateToken({ id: admin._id , role:"admin"});
 
-    res.json({
+    res.status(200).json({
       message: "Login successful",
       token,
       admin: {
