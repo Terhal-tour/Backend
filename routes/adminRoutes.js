@@ -3,7 +3,8 @@ import {
   addAdmin,
   updateAdmin,
   deleteAdmin,
-  getAllAdmins
+  getAllAdmins,
+  getAdminById
 } from '../controllers/AdminController.js';
 import { createAdminValidation, updateAdminValidation } from '../validations/adminValidations.js';
 import { validateInput } from '../middlewares/validateInput.js';
@@ -14,6 +15,7 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 const adminRouter=express.Router();
 adminRouter.use(authMiddleware);
 adminRouter.get('/',isAdmin,getAllAdmins);
+adminRouter.get('/:id', isAdmin, getAdminById);
 adminRouter.post('/',createAdminValidation,validateInput,isAdmin,addAdmin);
 adminRouter.put('/:id',updateAdminValidation,validateInput,isAdmin,updateAdmin);
 adminRouter.delete('/:id',isAdmin,deleteAdmin); //any admin can delete ,but suberadmin cant be deleted
