@@ -1,3 +1,4 @@
+import Admin from '../models/Admin.js';
 import {
   addAdminService,
   updateAdminService,
@@ -12,13 +13,18 @@ export const getAllAdmins = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const addAdmin = async (req, res) => {
   try {
-    const newAdmin = await addAdminService(req.body);
-    console.log(newAdmin);
+    const adminId = req.user.id;
+    const admin = await Admin.findById(adminId);
 
+    if (!admin?.isSuper) {
+      return res.status(401).json({ message: 'Only super admin can create admin' });
+    }
+
+    const newAdmin = await addAdminService(req.body);
     res.status(201).json(newAdmin);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -27,6 +33,12 @@ export const addAdmin = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
+    const adminId = req.user.id;
+    const admin = await Admin.findById(adminId);
+
+    if (!admin?.isSuper) {
+      return res.status(401).json({ message: 'Only super admin can update admin' });
+    }
     const updated = await updateAdminService(req.params.id, req.body);
     if (!updated) return res.status(404).json({ message: 'Admin not found' });
     res.json(updated);
@@ -37,6 +49,12 @@ export const updateAdmin = async (req, res) => {
 
 export const deleteAdmin = async (req, res) => {
   try {
+    const adminId = req.user.id;
+    const admin = await Admin.findById(adminId);
+
+    if (!admin?.isSuper) {
+      return res.status(401).json({ message: 'Only super admin can delete admin' });
+    }
     const deleted = await deleteAdminService(req.params.id);
     if (!deleted) return res.status(404).json({ message: 'Admin not found' });
     res.json({ message: 'Admin deleted successfully' });
