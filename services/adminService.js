@@ -1,46 +1,78 @@
-import Admin from '../models/Admin.js';
+import Admin from "../models/Admin.js";
 
 export const getAdminsService = async () => {
   return await Admin.find();
 };
 export const addAdminService = async (data) => {
-  const { name, email, password, isSuper  } = data;
+  const { name, email, password, isSuper } = data;
 
   const exists = await Admin.findOne({ email });
-  if (exists) throw new Error('Email already exists');
+  if (exists) throw new Error("Email already exists");
 
   const admin = new Admin({ name, email, password, isSuper });
   return await admin.save();
 };
 
-export const updateAdminService = async (id, data) => {
-  const admin = await Admin.findById(id);
-  if (!admin) {
-    throw new Error('Admin not found');
-  }
+// export const updateAdminService = async (id, data) => {
+//   const admin = await Admin.findById(id);
+//   if (!admin) {
+//     throw new Error('Admin not found');
+//   }
 
-  
-// cant make the super admin ordinary admin
-  if ('isSuper' in data) {
-    delete data.isSuper;
-  }
+// // cant make the super admin ordinary admin
+//   if ('isSuper' in data) {
+//     delete data.isSuper;
+//   }
 
-  const allowedFields = ['name', 'email', 'password'];
-  const filteredData = Object.fromEntries(
-    Object.entries(data).filter(([key]) => allowedFields.includes(key))
-  );
+//   const allowedFields = ['name', 'email', 'password'];
+//   const filteredData = Object.fromEntries(
+//     Object.entries(data).filter(([key]) => allowedFields.includes(key))
+//   );
 
-  const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, { new: true });
-  return updatedAdmin;
-};
+//   const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, { new: true });
+//   return updatedAdmin;
+// };
 
 export const deleteAdminService = async (id) => {
   const admin = await Admin.findById(id);
   if (!admin) {
-    throw new Error('Admin not found');
+    throw new Error("Admin not found");
   }
   if (admin.isSuper) {
-    throw new Error('Cannot delete a super admin');
+    throw new Error("Cannot delete a super admin");
   }
   return await Admin.findByIdAndDelete(id);
+};
+
+export const updateAdminService = async (id, data) => {
+  // Find existing admin
+  const admin = await Admin.findById(id);
+  if (!admin) {
+    throw new Error("Admin not found");
+  }
+
+  // Prevent changing isSuper through this update
+  if ("isSuper" in data) {
+    delete data.isSuper;
+  }
+
+  // Only allow name, email, password to be updated
+  const allowedFields = ["name", "email", "password"];
+  const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([key]) => allowedFields.includes(key))
+  );
+
+  // If password is provided & not empty → hash it
+  if (filteredData.password) {
+    filteredData.password = await bcrypt.hash(filteredData.password, 10);
+  } else {
+    delete filteredData.password; // Don't overwrite with empty string
+  }
+
+  // Update admin & exclude password in returned doc
+  const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, {
+    new: true,
+  }).select("-password");
+
+  return updatedAdmin;
 };
