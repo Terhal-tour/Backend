@@ -19,25 +19,32 @@ export const softDeleteUser = async (userId, password, actingUserId) => {
   return user;
 };
 
-export const reactivateUser = async (userId, password, actingUserId) => {
-  const user = await User.findById(userId);
-  if (!user) throw new Error('User not found.');
+export const reactivateUser = async (email, password) => {
+  if (!email || !password) {
+    throw new Error('Email and password are required.');
+  }
 
-  if (!user.isDeleted) throw new Error('Account is already active.');
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new Error('User not found.');
+  }
+
+  if (!user.isDeleted) {
+    throw new Error('Account is already active.');
+  }
 
   const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error('Incorrect password.');
+  if (!isMatch) {
+    throw new Error('Invalid credentials.');
+  }
 
+  // Reactivate
   user.isDeleted = false;
-  user.deletedAt = null;
-  user.deletedBy = null;
-  user.reactivatedAt = new Date();
-  user.reactivatedBy = actingUserId;
-
   await user.save();
+
   return user;
 };
-
 
 export const permanentlyDeleteUser = async (userId, password) => {
   const user = await User.findById(userId);

@@ -11,7 +11,7 @@ import { authMiddleware } from "../../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/:id/favourite", authMiddleware, addToFavourites); //used
+router.post("/:id/favourite", authMiddleware, addToFavourites); 
 
 router.get("/favourites", authMiddleware, getFavouritesByUserIdController);
 
