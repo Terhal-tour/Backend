@@ -21,6 +21,9 @@ const ratingSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+ratingSchema.index({ userId: 1, placeId: 1 }, { unique: true });
+
+
 const Rating = mongoose.model('Rating', ratingSchema);
 
 export default Rating;
