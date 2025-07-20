@@ -8,7 +8,7 @@ export const getUserFavoritePlaces = async (req, res) => {
 
     const favorites = await getUserFavorites(userId);
 
-    res.json({
+    res.status(200).json({
       success: true,
       data: favorites,
     });

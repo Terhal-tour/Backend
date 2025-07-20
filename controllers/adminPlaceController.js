@@ -20,7 +20,7 @@ export const updatePlace = async (req, res) => {
     if (!updatedPlace) {
       return res.status(404).json({ message: 'Place not found' });
     }
-    res.json(updatedPlace);
+    res.status(200).json(updatedPlace);
   } catch (err) {
     res.status(500).json({ message: 'Failed to update place', error: err.message });
   }
@@ -32,7 +32,7 @@ export const toggleVisibility = async (req, res) => {
     if (!place) {
       return res.status(404).json({ message: 'Place not found' });
     }
-    res.json({ message: 'Visibility toggled', visible: place.visible });
+    res.status(200).json({ message: 'Visibility toggled', visible: place.visible });
   } catch (err) {
     res.status(500).json({ message: 'Failed to toggle visibility', error: err.message });
   }

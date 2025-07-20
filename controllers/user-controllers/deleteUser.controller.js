@@ -12,9 +12,9 @@ export const deleteUserAccount = async (req, res) => {
 
     await softDeleteUser(userId, password, userId); // Acting user is the same user
 
-    res.json({ success: true, message: 'Account has been deactivated.' });
+    res.status(200).json({ success: true, message: 'Account has been deactivated.' });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -30,9 +30,9 @@ export const reactivateUserAccount = async (req, res) => {
     const user = await reactivateUser(email, password);
 console.log("user",user);
 
-    res.json({ success: true, message: 'Account has been reactivated.' });
+    res.status(200).json({ success: true, message: 'Account has been reactivated.' });
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
@@ -49,9 +49,9 @@ export const hardDeleteUserAccount = async (req, res) => {
 
     await permanentlyDeleteUser(userId, password);
 
-    res.json({ success: true, message: 'Account has been permanently deleted.' });
+    res.status(200).json({ success: true, message: 'Account has been permanently deleted.' });
 
   } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
+    res.status(500).json({ success: false, message: err.message });
   }
 };

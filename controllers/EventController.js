@@ -12,7 +12,6 @@ export const getAllEvents = async (req, res) => {
     try {
         // if the user is logedin
         const userId = req.user.id;
-        console.log("im in the controller");
 
         const events = userId ? await getEarlyEvents(req.query) : { "message": "You need to login first" };
         res.status(200).json(events);
