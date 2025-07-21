@@ -1,91 +1,97 @@
-import mongoose from "mongoose";
-import Rating from "../../models/Rating.js";
+// services/ratingService.js
+import Rating from "../../models/Rating.js"
 import Place from "../../models/Place.js";
 
-// Helper to recalculate and save avg for a place
-const recalculatePlaceAverage = async (placeId) => {
-  const result = await Rating.aggregate([
-    { $match: { placeId: new mongoose.Types.ObjectId(placeId) } },
-    {
-      $group: {
-        _id: "$placeId",
-        avgRating: { $avg: "$rating" },
-        totalRatings: { $sum: 1 },
-      },
-    },
-  ]);
-
-  const avgRating = result.length > 0 ? result[0].avgRating : 0;
-
-  await Place.findByIdAndUpdate(placeId, { rating: avgRating });
-
-  return avgRating;
-};
-
 export const ratePlace = async (userId, placeId, ratingValue) => {
+  // Validate range
   if (ratingValue < 1 || ratingValue > 5) {
     throw new Error("Rating must be between 1 and 5");
   }
 
-  if (!mongoose.Types.ObjectId.isValid(placeId)) {
-    throw new Error("Invalid place ID");
+  // 1️⃣ Check if place exists & visible
+  const place = await Place.findOne({ _id: placeId});
+  if (!place) {
+    throw new Error("Place not found");
   }
 
-  // ✅ Add or update user's rating with upsert
-  await Rating.findOneAndUpdate(
-    { userId, placeId },
-    { userId, placeId, rating: ratingValue },
-    { upsert: true, new: true }
-  );
+  // 2️⃣ Check if user has already rated -> update it, else create
+  const existing = await Rating.findOne({ userId, placeId });
 
-  // ✅ Recalculate avg
-  const avgRating = await recalculatePlaceAverage(placeId);
+  if (existing) {
+    existing.rating = ratingValue;
+    await existing.save();
+  } else {
+    await Rating.create({
+      userId,
+      placeId,
+      rating: ratingValue,
+    });
+  }
+
+  const allRatings = await Rating.find({ placeId });
+  const avgRating = allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length;
+
+  place.rating = avgRating;
+  await place.save();
 
   return { message: "Rating saved", newRating: ratingValue, avgRating };
 };
-
 export const getPlaceRating = async (placeId) => {
-  if (!mongoose.Types.ObjectId.isValid(placeId)) {
-    throw new Error("Invalid place ID");
-  }
-
+  // ✅ 1️⃣ Check if place exists
   const place = await Place.findById(placeId);
   if (!place) {
     throw new Error("Place not found");
   }
 
+  // ✅ 2️⃣ Get all ratings for the place
+  const ratings = await Rating.find({ placeId });
+
+  // ✅ 3️⃣ Calculate average rating
+  let avgRating = null;
+
+  if (ratings.length > 0) {
+    const sum = ratings.reduce((total, r) => total + Number(r.rating || 0), 0);
+    avgRating = sum / ratings.length;
+  }
+
   return {
-    avgRating: place.rating || 0,
+    avgRating: avgRating !== null ? Number(avgRating.toFixed(1)) : null,
+    totalRatings: ratings.length
   };
 };
 
 export const getUserRatingForPlace = async (userId, placeId) => {
-  if (!mongoose.Types.ObjectId.isValid(placeId)) {
-    throw new Error("Invalid place ID");
-  }
-
-  const userRating = await Rating.findOne({ userId, placeId });
-  if (!userRating) {
-    return { rating: null, message: "User has not rated this place" };
-  }
-
-  return { rating: userRating.rating, message: "User rating found" };
-};
-
+  // 1️⃣ Check if place exists & visible
+  const place = await Place.findOne({ _id: placeId});
+  if (!place) {
+    throw new Error("Place not found ");
+  } 
+    // 2️⃣ Get user's rating for the place
+    const userRating = await Rating.findOne({ userId, placeId });
+    if (!userRating) {
+      return { rating: null, message: "User has not rated this place" };
+    }
+    return { rating: userRating.rating, message: "User rating found" };
+}
 export const deleteUserRating = async (userId, placeId) => {
-  if (!mongoose.Types.ObjectId.isValid(placeId)) {
-    throw new Error("Invalid place ID");
-  }
-
-  const userRating = await Rating.findOne({ userId, placeId });
-  if (!userRating) {
-    return { message: "User has not rated this place" };
-  }
-
-  await Rating.deleteOne({ userId, placeId });
-
-  const avgRating = await recalculatePlaceAverage(placeId);
-
-  return { message: "User rating deleted", avgRating };
+  // 1️⃣ Check if place exists & visible
+  const place = await Place.findOne({ _id: placeId});
+  if (!place) {
+    throw new Error("Place not found ");
+  } 
+    // 2️⃣ Check if user has rated the place
+    const userRating = await Rating.findOne({ userId, placeId });
+    if (!userRating) {  
+        return { message: "User has not rated this place" };
+        }
+    // 3️⃣ Delete user's rating
+    await Rating.deleteOne({ userId, placeId });
+    // 4️⃣ Recalculate average rating for the place
+    const allRatings = await Rating.find({ placeId });
+    const avgRating = allRatings.length > 0
+        ? allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
+        : null;
+    place.rating = avgRating;
+    await place.save();
+    return { message: "User rating deleted", avgRating };
 };
-
