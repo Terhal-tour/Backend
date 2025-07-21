@@ -28,6 +28,7 @@ import adminPlaceRoutes from './routes/adminPlaceRoutes.js';
 import adminStatsRoutes from "./routes/adminStats.routes.js";
 import { initUserSocket } from "./sockets/userSocket.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import { realTimeRouter } from "./routes/RealTimeRoutes.js";
 
 dotenv.config();
 
@@ -74,7 +75,7 @@ app.use("/assestant", assistantRouter);
 app.use("/categories", categoryRouter);
 
 app.use("/admin/stats", adminStatsRoutes);
-
+app.use('/realTimeRecomendation',realTimeRouter)
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" },
