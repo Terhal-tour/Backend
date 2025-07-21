@@ -16,6 +16,7 @@ export const login = async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
+    console.log(`Admin ${admin.isSuper} logged in successfully`);
 
     const token = generateToken({ id: admin._id , role:"admin"});
 
