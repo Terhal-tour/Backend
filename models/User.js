@@ -28,11 +28,12 @@ const userSchema = new mongoose.Schema({
 
   role: {
     type: String,
-    enum: ['traveler', 'admin'],
+    enum: ['traveler', 'guide'],
     default: 'traveler',
   },
 
   isVerified: { type: Boolean, default: false },
+  isAvailable: { type: Boolean, default: true },//for the driver role
   verificationToken: String,
   verificationTokenExpires: Date,
 
