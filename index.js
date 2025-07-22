@@ -30,6 +30,7 @@ import { initUserSocket } from "./sockets/userSocket.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import { realTimeRouter } from "./routes/RealTimeRoutes.js";
 import { guideRouter } from "./routes/GuideRouter.js";
+import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
 
 dotenv.config();
 
@@ -77,6 +78,7 @@ app.use("/categories", categoryRouter);
 
 app.use("/admin/stats", adminStatsRoutes);
 app.use('/realTimeRecomendation',realTimeRouter);
+app.use("/guide/request", guideRequestRouter);
 app.use("/guide", guideRouter);
 const server = http.createServer(app);
 const io = new Server(server, {
