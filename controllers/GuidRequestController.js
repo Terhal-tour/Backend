@@ -4,7 +4,8 @@ import {
   editGuideRequestService,
   getRequestsByUserService,
   getRequestsByGuideService,
-  updateRequestStatusService
+  confirmRequestStatusService,
+  rejectRequestStatusService
 } from '../services/guidRequestService.js';
 
 export const requestGuide = async (req, res) => {
@@ -65,6 +66,7 @@ export const getUserRequests = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 export const getGuideRequests = async (req, res) => {
   try {
     const guideId = req.user.id;
@@ -80,7 +82,7 @@ export const confirmGuideRequest = async (req, res) => {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
 
-    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'approved');
+    const updatedRequest = await confirmRequestStatusService(requestId, guideId, 'approved');
     res.status(200).json({ message: 'Request confirmed', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -92,7 +94,7 @@ export const rejectGuideRequest = async (req, res) => {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
 
-    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'rejected');
+    const updatedRequest = await rejectRequestStatusService(requestId, guideId, 'rejected');
     res.status(200).json({ message: 'Request rejected', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });

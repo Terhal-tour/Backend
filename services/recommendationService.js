@@ -25,7 +25,7 @@ export const getSmartRecommendations = async (lat, lng) => {
     // 3. Generate recommendation with AI
     const prompt = `Current location: (${lat}, ${lng}). The weather is currently: ${weatherDesc}, with a temperature of ${temperature}°C. Nearby places: ${nearby_places.map((p, i) => `${i + 1}. ${p.name} - ${p.type}`).join("\n")}
 
-Recommend 3 suitable places for the user to visit right now based on the current weather and location, and explain the reason for each suggestion.
+Recommend 3 suitable places for the user to visit right now based on the current weather and location, and explain the reason for each suggestion , make your message short and friendly send respond in json form.
 `;
 
     const aiResponse = await openai.chat.completions.create({
