@@ -4,8 +4,7 @@ import {
   editGuideRequestService,
   getRequestsByUserService,
   getRequestsByGuideService,
-  confirmRequestStatusService,
-  rejectRequestStatusService
+  updateRequestStatusService
 } from '../services/guidRequestService.js';
 
 export const requestGuide = async (req, res) => {
@@ -82,7 +81,7 @@ export const confirmGuideRequest = async (req, res) => {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
 
-    const updatedRequest = await confirmRequestStatusService(requestId, guideId, 'approved');
+    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'approved');
     res.status(200).json({ message: 'Request confirmed', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -94,7 +93,7 @@ export const rejectGuideRequest = async (req, res) => {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
 
-    const updatedRequest = await rejectRequestStatusService(requestId, guideId, 'rejected');
+    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'rejected');
     res.status(200).json({ message: 'Request rejected', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });

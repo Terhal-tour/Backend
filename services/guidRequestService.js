@@ -55,37 +55,17 @@ export const getRequestsByGuideService = async (guideId) => {
     return await GuideRequest.find({ guide: guideId }).sort({ createdAt: -1 });
 };
 
-export const confirmRequestStatusService = async (requestId, guideId, status) => {
-  const request = await GuideRequest.findOne({ _id: requestId, guideId });
+export const updateRequestStatusService = async (requestId, guideId, status) => {
+    const request = await GuideRequest.findById(requestId);
+    if (!request) throw new Error('Request not found');
+    if (!request.guide.equals(guideId)) {
+        throw new Error('Not authorized to modify this request');
+    }
 
-  if (!request) {
-    throw new Error("Request not found or unauthorized");
-  }
+    if (!['approved', 'rejected'].includes(status)) {
+        throw new Error('Invalid status update');
+    }
 
-  if (request.status === "confirmed") {
-    throw new Error("Request already confirmed");
-  }
-
-  request.status = status || "confirmed";
-  await request.save();
-
-  return request;
-};
-
-// Reject request status
-export const rejectRequestStatusService = async (requestId, guideId, status) => {
-  const request = await GuideRequest.findOne({ _id: requestId, guideId });
-
-  if (!request) {
-    throw new Error("Request not found or unauthorized");
-  }
-
-  if (request.status === "rejected") {
-    throw new Error("Request already rejected");
-  }
-
-  request.status = status || "rejected";
-  await request.save();
-
-  return request;
+    request.status = status;
+    return await request.save();
 };
