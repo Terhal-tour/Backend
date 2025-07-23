@@ -99,6 +99,7 @@ export const login = async (req, res) => {
         nationality: user.nationality,
         language: user.language,
         role:user.role,
+        image: user.image
       }
     });
   } catch (err) {

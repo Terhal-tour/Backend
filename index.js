@@ -31,6 +31,11 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import { realTimeRouter } from "./routes/RealTimeRoutes.js";
 import { guideRouter } from "./routes/GuideRouter.js";
 
+import postRoutes from './routes/user-interactions/postRoutes.js';
+import commentsRoutes from './routes/user-interactions/commentRoutes.js';
+
+
+
 dotenv.config();
 
 const app = express();
@@ -41,7 +46,7 @@ app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
+// app.use("/uploads", express.static(path.resolve("uploads")));
 app.use('/auth', authRoutes);
 app.use('/auth/admin',adminAuthRouter);
 app.use('/admin', adminRouter);
@@ -78,6 +83,10 @@ app.use("/categories", categoryRouter);
 app.use("/admin/stats", adminStatsRoutes);
 app.use('/realTimeRecomendation',realTimeRouter);
 app.use("/guide", guideRouter);
+
+
+app.use("/posts", postRoutes);
+app.use("/comments", commentsRoutes);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: "*" },
