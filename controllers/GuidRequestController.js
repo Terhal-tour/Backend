@@ -80,7 +80,6 @@ export const confirmGuideRequest = async (req, res) => {
   try {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
-
     const updatedRequest = await updateRequestStatusService(requestId, guideId, 'approved');
     res.status(200).json({ message: 'Request confirmed', request: updatedRequest });
   } catch (error) {

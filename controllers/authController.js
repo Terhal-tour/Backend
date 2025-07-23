@@ -7,7 +7,7 @@ import sendEmail from '../utils/sendEmail.js';
 //  Register a new user
 export const register = async (req, res) => {
   try {
-    const { name, email, password, mobile, nationality, language } = req.body;
+    const { name, email, password, mobile, nationality, language ,role} = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ error: "Email already exists" });
@@ -15,12 +15,13 @@ export const register = async (req, res) => {
     const verificationToken = crypto.randomBytes(32).toString("hex");
 
     const user = new User({
+      role,
       name,
       email,
-      password,
       mobile,
-      nationality,
       language,
+      password,
+      nationality,
       verificationToken,
       verificationTokenExpires: Date.now() + 1000 * 60 * 60 * 24,
     });
@@ -42,7 +43,7 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "Registration successful. Please check your email to verify.",user });
   } catch (error) {
-       res.status(500).json({ message: 'Internal Server Error', error: err.message });
+       res.status(500).json({ message: 'Internal Server Error', error: error.message });
 
   }
 };
