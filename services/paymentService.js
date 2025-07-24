@@ -53,7 +53,9 @@ export const handleStripeWebhook = async (event) => {
 
     //  Update the guide request with paid = true
     await GuideRequest.findByIdAndUpdate(guideRequestId, {
-      paid: true
+      paid: true,
+      status: 'done',
+
     });
 
     // (اختياري) يمكنك إنشاء سجل في Model الدفع (Payment) هنا أيضًا إن أردت
