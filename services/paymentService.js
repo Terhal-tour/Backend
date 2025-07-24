@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import GuideRequest from "../models/GuideRequest.js";
+import Payment from "../models/Payment.js";
 
-// Stripe secret key from .env
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
@@ -14,7 +14,9 @@ export const createCheckoutSession = async (guideRequestId, user) => {
     throw new Error("Guide request not found");
   }
 
-  // Create a checkout session
+  // Example: $50 in cents
+  const totalAmount = 5000;
+
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
@@ -23,7 +25,7 @@ export const createCheckoutSession = async (guideRequestId, user) => {
       {
         price_data: {
           currency: 'usd',
-          unit_amount: 5000, // $50 (in cents)
+          unit_amount: totalAmount,
           product_data: {
             name: `Tour Guide for ${guideRequest.duration}`,
             description: `For ${guideRequest.groupSize} people on ${new Date(guideRequest.date).toDateString()}`
@@ -48,14 +50,37 @@ export const createCheckoutSession = async (guideRequestId, user) => {
 export const handleStripeWebhook = async (event) => {
   if (event.type === 'checkout.session.completed') {
     const session = event.data.object;
-
     const guideRequestId = session.metadata.guideRequestId;
 
-    //  Update the guide request with paid = true
-    await GuideRequest.findByIdAndUpdate(guideRequestId, {
-      paid: true
-    });
+    // Update the guide request as paid
+    const guideRequest = await GuideRequest.findByIdAndUpdate(
+      guideRequestId,
+      { paid: true },
+      { new: true }
+    );
 
-    // (اختياري) يمكنك إنشاء سجل في Model الدفع (Payment) هنا أيضًا إن أردت
+    if (!guideRequest) {
+      console.error("Guide request not found during webhook processing.");
+      return;
+    }
+
+    // Total amount paid in cents
+    const totalAmount = session.amount_total;
+
+    // Calculate earnings
+    const guideEarning = totalAmount * 0.9;
+    const platformFee = totalAmount - guideEarning;
+
+    // Save a payment record
+    await Payment.create({
+      requestId: guideRequest._id,
+      travelerId: guideRequest.user,
+      guideId: guideRequest.guide,
+      amount: totalAmount,
+      guideEarning,
+      platformFee,
+      stripeSessionId: session.id,
+      status: "paid"
+    });
   }
 };

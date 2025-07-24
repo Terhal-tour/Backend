@@ -5,7 +5,8 @@ const paymentSchema = new mongoose.Schema({
   travelerId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   guideId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   amount: { type: Number, required: true }, // Total amount paid by traveler
-  guideEarning: { type: Number, required: true }, // Amount after 10% deduction
+  guideEarning: { type: Number, required: true }, // 90% amount
+  platformFee: { type: Number, required: true }, // 10% amount (new)
   stripeSessionId: { type: String }, // ID for tracking session via Stripe
   status: { type: String, enum: ["pending", "paid", "failed"], default: "pending" },
   createdAt: { type: Date, default: Date.now }

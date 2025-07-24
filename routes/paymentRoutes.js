@@ -4,6 +4,8 @@ import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+// /payments
+
 // Stripe payment initiation
 router.post('/create/:guideRequestId', authMiddleware, createPayment);
 
