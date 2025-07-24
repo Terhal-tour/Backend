@@ -55,7 +55,7 @@ export const getRequestsByGuideService = async (guideId) => {
     return await GuideRequest.find({ guide: guideId }).sort({ createdAt: -1 });
 };
 
-export const updateRequestStatusService = async (requestId, guideId, status) => {
+export const updateRequestStatusService = async (requestId, guideId, status, price) => {
     const request = await GuideRequest.findById(requestId);
     if (!request) throw new Error('Request not found');
     if (!request.guide.equals(guideId)) {
@@ -67,5 +67,6 @@ export const updateRequestStatusService = async (requestId, guideId, status) => 
     }
 
     request.status = status;
+    request.price = price;
     return await request.save();
 };

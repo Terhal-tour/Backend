@@ -38,6 +38,11 @@ const guideRequestSchema = new mongoose.Schema({
     required: true,
     min: 1,
   },
+  price:{
+    type:Number,
+    required:false,
+    default: 0
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
