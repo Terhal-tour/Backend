@@ -27,10 +27,11 @@ import categoryRouter from './routes/categoryRoutes.js';
 import adminPlaceRoutes from './routes/adminPlaceRoutes.js';
 import adminStatsRoutes from "./routes/adminStats.routes.js";
 import { initUserSocket } from "./sockets/userSocket.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
 import { realTimeRouter } from "./routes/RealTimeRoutes.js";
 import { guideRouter } from "./routes/GuideRouter.js";
 import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
+import paymentRoutes from "./routes/paymentRoutes.js"
+import supportusRoutes  from "./routes/supportusRoutes.js"
 
 dotenv.config();
 
@@ -69,8 +70,11 @@ app.use("/user", deleteRoutes);
 app.use("/user", favoriteRoutes);
 app.use("/user/reviews", reviewRoutes);
 
-// payment routes
-app.use("/payment", paymentRoutes);
+// payment
+app.use("/payments", paymentRoutes);
+
+// support us routes
+app.use("/supportus", supportusRoutes);
 
 app.use("/assestant", assistantRouter);
 
