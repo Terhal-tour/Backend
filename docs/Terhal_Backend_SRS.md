@@ -132,8 +132,9 @@ Terhal_ترحال allows travelers (local and foreign) to explore the best of Eg
   "mobile": "string",
   "nationality": "string",
   "language": "AR | EN",
-  "role": "traveler | guid",
+  "role": "traveler | guid ",
   "isVerified": true,
+  "favourites": ["placeId"],
   "location": { "lat": "number", "lng": "number" }
 }
 ````
