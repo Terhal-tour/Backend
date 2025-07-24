@@ -1,23 +1,30 @@
-// controllers/payment.controller.js
-import { createStripeCheckoutSession } from "../services/paymentService.js";
+import { createCheckoutSession, handleStripeWebhook } from "../services/paymentService.js";
 
 /**
- * Handle donation checkout session creation.
- * POST /payment/checkout
+ * Create Stripe session URL and return to frontend
  */
-export const handleCreateCheckoutSession = async (req, res) => {
+export const createPayment = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const url = await createCheckoutSession(req.params.guideRequestId, req.user);
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    if (!amount || amount < 1) {
-      return res.status(400).json({ message: "Invalid donation amount." });
-    }
+/**
+ * Stripe webhook endpoint
+ */
+export const stripeWebhook = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
 
-    const sessionUrl = await createStripeCheckoutSession(amount);
-
-    res.status(200).json({ url: sessionUrl });
-  } catch (error) {
-    console.error("Stripe Payment Error:", error);
-    res.status(500).json({ message: "Payment session creation failed." });
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    await handleStripeWebhook(event);
+    res.json({ received: true });
+  } catch (err) {
+    console.error("Webhook error:", err.message);
+    res.status(400).send(`Webhook Error: ${err.message}`);
   }
 };
