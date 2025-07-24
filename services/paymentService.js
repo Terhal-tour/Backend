@@ -55,8 +55,8 @@ export const handleStripeWebhook = async (event) => {
     // Update the guide request as paid
     const guideRequest = await GuideRequest.findByIdAndUpdate(
       guideRequestId,
-      { paid: true },
-      { new: true }
+      { paid: true , status: "done" },
+      { new: true },
     );
 
     if (!guideRequest) {
