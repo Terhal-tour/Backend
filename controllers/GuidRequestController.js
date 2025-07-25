@@ -69,6 +69,8 @@ export const getUserRequests = async (req, res) => {
 export const getGuideRequests = async (req, res) => {
   try {
     const guideId = req.user.id;
+    
+
     const requests = await getRequestsByGuideService(guideId);
     res.status(200).json({ requests });
   } catch (error) {
@@ -80,7 +82,9 @@ export const confirmGuideRequest = async (req, res) => {
   try {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
-    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'approved');
+    //Take the price from the request body
+    const price= req.body.price ;
+    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'approved',price);
     res.status(200).json({ message: 'Request confirmed', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -92,7 +96,7 @@ export const rejectGuideRequest = async (req, res) => {
     const requestId = req.params.requestId;
     const guideId = req.user.id;
 
-    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'rejected');
+    const updatedRequest = await updateRequestStatusService(requestId, guideId, 'rejected',0);
     res.status(200).json({ message: 'Request rejected', request: updatedRequest });
   } catch (error) {
     res.status(500).json({ error: error.message });

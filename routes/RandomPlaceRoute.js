@@ -1,4 +1,4 @@
-// routes/placeRoutes.js
+
 import express from 'express';
 import { getRandomPlace } from '../controllers/RandomPlaceController.js'
 
