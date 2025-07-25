@@ -6,7 +6,15 @@ export const createAdminValidation = [
     .notEmpty().withMessage('Name is required'),
 
   body('email')
-    .isEmail().withMessage('Invalid email format'),
+    .isEmail().withMessage('Invalid email format')
+    .custom(email => {
+      const tempDomains = ['tempmail.com', '10minutemail.com', 'mailinator.com'];
+      const domain = email.split('@')[1];
+      if (tempDomains.includes(domain)) {
+        throw new Error('Temporary emails are not allowed');
+      }
+      return true;
+    }),
 
   body('password')
     .isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
@@ -24,7 +32,15 @@ export const updateAdminValidation = [
 
   body('email')
     .optional()
-    .isEmail().withMessage('Invalid email format'),
+    .isEmail().withMessage('Invalid email format')
+    .custom(email => {
+      const tempDomains = ['tempmail.com', '10minutemail.com', 'mailinator.com'];
+      const domain = email.split('@')[1];
+      if (tempDomains.includes(domain)) {
+        throw new Error('Temporary emails are not allowed');
+      }
+      return true;
+    }),
 
   body('password')
     .optional()

@@ -69,7 +69,7 @@ export const updateAdmin = async (req, res) => {
     const updated = await updateAdminService(req.params.id, req.body);
 
     if (!updated) {
-      return res.status(400).json({ message: 'Admin not found' });
+      return res.status(400).json({ message: 'Admin not found ,or updated data not changed' });
     }
     console.log(updated);
     

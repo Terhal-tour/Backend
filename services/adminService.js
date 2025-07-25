@@ -1,5 +1,5 @@
 import Admin from "../models/Admin.js";
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
 
 export const getAdminsService = async () => {
   return await Admin.find();
@@ -14,25 +14,46 @@ export const addAdminService = async (data) => {
   return await admin.save();
 };
 
-// export const updateAdminService = async (id, data) => {
-//   const admin = await Admin.findById(id);
-//   if (!admin) {
-//     throw new Error('Admin not found');
-//   }
 
-// // cant make the super admin ordinary admin
-//   if ('isSuper' in data) {
-//     delete data.isSuper;
-//   }
+export const updateAdminService = async (id, data) => {
+  const admin = await Admin.findById(id);
+  if (!admin) {
+    throw new Error('Admin not found');
+  }
 
-//   const allowedFields = ['name', 'email', 'password'];
-//   const filteredData = Object.fromEntries(
-//     Object.entries(data).filter(([key]) => allowedFields.includes(key))
-//   );
+  if ('isSuper' in data) {
+    delete data.isSuper;
+  }
 
-//   const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, { new: true });
-//   return updatedAdmin;
-// };
+  const isSameName = data.name === admin.name;
+  const isSameEmail = data.email === admin.email;
+  const isSamePassword = data.password
+    ? await admin.comparePassword(data.password)
+    : true;
+
+  if (isSameName && isSameEmail && isSamePassword) {
+    return false; 
+  }
+
+  console.log("changed name:", !isSameName);
+  console.log("changed email:", !isSameEmail);
+  console.log("changed password:", !isSamePassword);
+
+  // 🔒 فقط الحقول المسموحة
+  const allowedFields = ['name', 'email', 'password'];
+  const filteredData = Object.fromEntries(
+    Object.entries(data).filter(([key]) => allowedFields.includes(key))
+  );
+
+  // ✅ إذا كان الباسورد موجود، سيتم تشفيره في middleware تلقائياً
+  const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, {
+    new: true,
+    runValidators: true,
+  });
+
+  return updatedAdmin;
+};
+
 
 export const deleteAdminService = async (id) => {
   const admin = await Admin.findById(id);
@@ -43,37 +64,4 @@ export const deleteAdminService = async (id) => {
     throw new Error("Cannot delete a super admin");
   }
   return await Admin.findByIdAndDelete(id);
-};
-
-export const updateAdminService = async (id, data) => {
-  // Find existing admin
-  const admin = await Admin.findById(id);
-  if (!admin) {
-    throw new Error("Admin not found");
-  }
-
-  // Prevent changing isSuper through this update
-  if ("isSuper" in data) {
-    delete data.isSuper;
-  }
-
-  // Only allow name, email, password to be updated
-  const allowedFields = ["name", "email", "password"];
-  const filteredData = Object.fromEntries(
-    Object.entries(data).filter(([key]) => allowedFields.includes(key))
-  );
-
-  // If password is provided & not empty → hash it
-  if (filteredData.password) {
-    filteredData.password = await bcrypt.hash(filteredData.password, 10);
-  } else {
-    delete filteredData.password; // Don't overwrite with empty string
-  }
-
-  // Update admin & exclude password in returned doc
-  const updatedAdmin = await Admin.findByIdAndUpdate(id, filteredData, {
-    new: true,
-  }).select("-password");
-
-  return updatedAdmin;
 };
