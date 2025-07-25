@@ -8,6 +8,8 @@ import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import redisClient from "./lib/redisClient.js";
+import uploadRouter from './routes/upload.js';
+
 
 
 import authRoutes from "./routes/authRoutes.js";
@@ -44,6 +46,8 @@ const app = express();
 const port = 3000;
 app.use(express.json());
 app.use(cors());
+app.use('/upload', uploadRouter);
+
 app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => {
   res.send("Hello World!");
