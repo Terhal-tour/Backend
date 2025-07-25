@@ -12,7 +12,6 @@ export const searchPlaces = async (query) => {
     $or: [
       { name: regex }, //how to make it like  [TODO]   Mosque El Appasi    mosque elabasi       
       { description: regex }, 
-      { category: regex },
       { address: regex },    
     ],
   })
