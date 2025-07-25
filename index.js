@@ -42,6 +42,11 @@ dotenv.config();
 
 const app = express();
 const port = 3000;
+
+//  app.use(express.json()) لازم تيجي دي قبل 
+//  Stripe webhook must be raw
+app.use("/payments/webhook", express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("uploads"));

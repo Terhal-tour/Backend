@@ -14,8 +14,7 @@ export const createCheckoutSession = async (guideRequestId, user) => {
     throw new Error("Guide request not found");
   }
 
-  // Example: $50 in cents
-  const totalAmount = 5000;
+  const totalAmount = Math.round(guideRequest.price * 100); // Convert to cents
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -52,11 +51,11 @@ export const handleStripeWebhook = async (event) => {
     const session = event.data.object;
     const guideRequestId = session.metadata.guideRequestId;
 
-    // Update the guide request as paid
+    // Mark the guide request as paid and completed
     const guideRequest = await GuideRequest.findByIdAndUpdate(
       guideRequestId,
-      { paid: true , status: "done" },
-      { new: true },
+      { paid: true, status: "done" },
+      { new: true }
     );
 
     if (!guideRequest) {
@@ -64,10 +63,8 @@ export const handleStripeWebhook = async (event) => {
       return;
     }
 
-    // Total amount paid in cents
-    const totalAmount = session.amount_total;
+    const totalAmount = session.amount_total; // Amount in cents
 
-    // Calculate earnings
     const guideEarning = totalAmount * 0.9;
     const platformFee = totalAmount - guideEarning;
 
@@ -83,4 +80,15 @@ export const handleStripeWebhook = async (event) => {
       status: "paid"
     });
   }
+};
+
+/**
+ * Get all paid payments for a specific guide and calculate total earnings
+ */
+export const getGuidePaymentsService = async (guideId) => {
+  const payments = await Payment.find({ guideId, status: "paid" }).sort({ createdAt: -1 });
+
+  const totalEarnings = payments.reduce((sum, payment) => sum + payment.guideEarning, 0);
+
+  return { payments, totalEarnings };
 };
