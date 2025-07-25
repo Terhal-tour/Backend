@@ -34,7 +34,7 @@ import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
 
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
-
+import  randomPlaceRoute  from './routes/RandomPlaceRoute.js'
 
 
 dotenv.config();
@@ -73,7 +73,8 @@ app.use("/user", historyRoutes);
 app.use("/user", deleteRoutes);
 app.use("/user", favoriteRoutes);
 app.use("/user/reviews", reviewRoutes);
-
+//random place route
+app.use("/randomplaces",randomPlaceRoute)
 // payment routes
 app.use("/payment", paymentRoutes);
 
