@@ -18,3 +18,8 @@ const fileFilter=(req,file,cb)=>{
     cb(null, true);
 } 
 export const upload=multer({storage,fileFilter});
+
+
+// For Cloudinary
+const memoryStorage = multer.memoryStorage();
+export const uploadMemory = multer({ storage: memoryStorage });
