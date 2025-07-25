@@ -34,8 +34,7 @@ import { guideRouter } from "./routes/GuideRouter.js";
 import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
 import paymentRoutes from "./routes/paymentRoutes.js"
 import supportusRoutes  from "./routes/supportusRoutes.js"
-import paymentRoutes from "./routes/paymentRoutes.js"
-import supportusRoutes  from "./routes/supportusRoutes.js"
+
 
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
@@ -90,14 +89,6 @@ app.use("/user/reviews", reviewRoutes);
 app.use("/randomplaces",randomPlaceRoute)
 // payment
 app.use("/payments", paymentRoutes);
-
-
-// payment
-app.use("/payments", paymentRoutes);
-
-// support us routes
-app.use("/supportus", supportusRoutes);
-
 
 // support us routes
 app.use("/supportus", supportusRoutes);
