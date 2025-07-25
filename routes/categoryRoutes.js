@@ -6,8 +6,8 @@ import { createCategoryValidation, updateCategoryValidation } from '../validatio
 import { createCategory, deleteCategory, getAllCategories, getCategoryById, updateCategory } from '../controllers/CategoryController.js';
 const categoryRouter=express.Router();
 
-categoryRouter.use(authMiddleware);
 categoryRouter.get('/',getAllCategories);
+categoryRouter.use(authMiddleware);
 categoryRouter.get('/:id',getCategoryById);
 //admin routs user not allowed here 
 categoryRouter.post('/',createCategoryValidation,validateInput,isAdmin,createCategory);

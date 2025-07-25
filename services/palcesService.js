@@ -1,6 +1,7 @@
 import History from "../models/History.js";
 import Place from "../models/Place.js";
 
+
 export const searchPlaces = async (query) => {
 
   const regex = new RegExp(query, "i");
@@ -9,9 +10,9 @@ export const searchPlaces = async (query) => {
   return await Place.find({
     visible: true, // Only return places marked as visible (not deleted)
     $or: [
-      { name: regex },        
+      { name: regex }, //how to make it like  [TODO]   Mosque El Appasi    mosque elabasi       
       { description: regex }, 
-      { location: regex },    
+      { category: regex },
       { address: regex },    
     ],
   })
@@ -92,10 +93,10 @@ export const getPlaces = async (query) => {
   const limit = parseInt(query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  const filter = { visible: true }; 
+  const filter = { visible: true };
 
   const places = await Place.find(filter).skip(skip).limit(limit);
-  const total = await Place.countDocuments(filter); 
+  const total = await Place.countDocuments(filter);
 
   return {
     currentPage: page,
