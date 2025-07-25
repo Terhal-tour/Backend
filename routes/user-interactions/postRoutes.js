@@ -1,7 +1,8 @@
+
 import express from "express";
-import { createPost, getPosts, likePost } from "../../controllers/user-interactions/postController.js";
+import { createPost, deletePost, getPosts, likePost } from "../../controllers/user-interactions/postController.js";
 import { authMiddleware } from "../../middlewares/authMiddleware.js";
-import { upload } from "../../middlewares/upload.js"; // لو حابب تفصل الـ multer
+import {  upload} from "../../middlewares/upload.js"; // Multer config
 import { body } from "express-validator";
 import { validateInput } from "../../middlewares/validateInput.js";
 
@@ -12,11 +13,13 @@ router.get("/", getPosts);
 router.post(
   "/",
   authMiddleware,
-  upload.array("images", 5),
-  body("description").notEmpty().withMessage("الوصف مطلوب"),
+  upload.array("images", 5), // max 5 images
+  body("description").notEmpty().withMessage("Description is required"),
   validateInput,
   createPost
 );
+// DELETE /posts/:postId
+router.delete("/:postId", authMiddleware, deletePost);
 
 router.put("/:postId/like", authMiddleware, likePost);
 
