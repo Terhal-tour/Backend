@@ -56,6 +56,11 @@ export const getEvent = async (id) => {
 
 export const addEvent = async (eventData) => {
     try {
+        //if events exists  return event already exists
+        const existingEvent = await Event.findOne({ name: eventData.name ,startTime: eventData.startTime ,endTime: eventData.endTime });
+        if (existingEvent) {
+            return false;
+        }
         const event = new Event(eventData);
         await event.save();
         return event;

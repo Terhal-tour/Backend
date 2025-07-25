@@ -55,10 +55,14 @@ export const createEvent = async (req, res) => {
 
         const eventData = req.body;
         const event = await addEvent({ ...eventData, createdBy: userId }); // add createdBy if needed
-
+        console.log(event);
+        if(!event) {
+            return res.status(400).json({ message: "Event already exists with the same name, start time, and end time" });
+        }
+        
         res.status(201).json(event);
     } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
     }
 };
 
