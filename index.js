@@ -8,8 +8,6 @@ import http from "http";
 import cors from "cors";
 import { Server } from "socket.io";
 import redisClient from "./lib/redisClient.js";
-import uploadRouter from './routes/upload.js';
-
 
 
 import authRoutes from "./routes/authRoutes.js";
@@ -35,10 +33,9 @@ import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
 import paymentRoutes from "./routes/paymentRoutes.js"
 import supportusRoutes  from "./routes/supportusRoutes.js"
 
-
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
-import  randomPlaceRoute  from './routes/RandomPlaceRoute.js'
+
 
 
 dotenv.config();
@@ -52,8 +49,6 @@ app.use("/payments/webhook", express.raw({ type: 'application/json' }));
 
 app.use(express.json());
 app.use(cors());
-app.use('/upload', uploadRouter);
-
 app.use("/uploads", express.static("uploads"));
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -85,8 +80,6 @@ app.use("/user", deleteRoutes);
 app.use("/user", favoriteRoutes);
 app.use("/user/reviews", reviewRoutes);
 
-//random place route
-app.use("/randomplaces",randomPlaceRoute)
 // payment
 app.use("/payments", paymentRoutes);
 
