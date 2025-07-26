@@ -5,6 +5,7 @@ import {
   deleteAdminService,
   getAdminsService
 } from '../services/adminService.js';
+import mongoose from "mongoose"; 
 
 export const getAllAdmins = async (req, res) => {
   try {
@@ -66,10 +67,18 @@ export const getAdminById = async (req, res) => {
 
 export const updateAdmin = async (req, res) => {
   try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+  return res.status(400).json({ message: "Invalid ID format" });
+}
+    const admin=await Admin.findById(req.params.id);
+    console.log(admin,"admin");
+    if(!admin){
+      res.status(404).json({"message":"admin not found"});
+    }
     const updated = await updateAdminService(req.params.id, req.body);
 
     if (!updated) {
-      return res.status(400).json({ message: 'Admin not found ,or updated data not changed' });
+      return res.status(400).json({ message: ' updated data not changed' });
     }
     console.log(updated);
     
