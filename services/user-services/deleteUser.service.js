@@ -5,8 +5,10 @@ import bcrypt from 'bcryptjs';
 export const softDeleteUser = async (userId, password, actingUserId) => {
   const user = await User.findById(userId);
   if (!user) throw new Error('User not found.');
-
-  const isMatch = await bcrypt.compare(password, user.password);
+if(user.isDeleted==true){
+  return false; 
+}  
+const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error('Incorrect password.');
 
   user.isDeleted = true;
