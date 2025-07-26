@@ -154,7 +154,9 @@ export const handleGetPlacesNearby = async (req, res) => {
     let lat = req.query.lat ? parseFloat(req.query.lat) : null;
     let lng = req.query.lng ? parseFloat(req.query.lng) : null;
     const radius = req.query.radius ? parseFloat(req.query.radius) : 5; // Default 5km
-
+    if (isNaN(radius) || radius <= 0 ) {
+      return res.status(400).json({ message: "Radius must be a positive number." });
+    }
     // [MODIFIED] If lat/lng not provided, fetch from user data in DB
     if ((lat === null || lng === null) && req.user && req.user.id) {
       const user = await User.findById(req.user.id);

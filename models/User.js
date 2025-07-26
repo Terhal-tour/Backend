@@ -22,8 +22,27 @@ const userSchema = new mongoose.Schema({
   language: { type: String, enum: ['AR', 'EN'], default: 'AR' },
   isDeleted: { type: Boolean, default: false },
   // [MODIFIED] Store user's last known location for notifications
-  lastLat: { type: Number, default: null },
-  lastLng: { type: Number, default: null },
+ lastLat: {
+  type: Number,
+  default: null,
+  validate: {
+    validator: function (value) {
+      return value === null || (value >= -90 && value <= 90);
+    },
+    message: props => `${props.value} is not a valid latitude! It must be between -90 and 90.`,
+  },
+},
+
+lastLng: {
+  type: Number,
+  default: null,
+  validate: {
+    validator: function (value) {
+      return value === null || (value >= -180 && value <= 180);
+    },
+    message: props => `${props.value} is not a valid longitude! It must be between -180 and 180.`,
+  },
+},
   image: { type: String, default: '' },
 
   role: {

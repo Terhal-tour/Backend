@@ -31,10 +31,10 @@ export const updateUserLocation = async (req, res) => {
       return res.status(400).json({ message: 'Latitude and longitude are required as numbers.' });
     }
     const user = await User.findByIdAndUpdate(
-      userId,
-      { lastLat: lat, lastLng: lng },
-      { new: true }
-    );
+  userId,
+  { lastLat: lat, lastLng: lng },
+  { new: true, runValidators: true } 
+);
     if (!user) {
       return res.status(404).json({ message: 'User not found.' });
     }
