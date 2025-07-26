@@ -43,8 +43,15 @@ export const register = async (req, res) => {
 
     res.status(201).json({ message: "Registration successful. Please check your email to verify.",user });
   } catch (error) {
-       res.status(500).json({ message: 'Internal Server Error', error: error.message });
+    if (error.name === 'ValidationError') {
+      const validationMessages = Object.values(error.errors).map(err => err.message);
+      return res.status(400).json({
+        message: 'Validation error',
+        errors: validationMessages
+      });
+    }
 
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
