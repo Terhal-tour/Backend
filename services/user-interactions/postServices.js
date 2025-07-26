@@ -4,14 +4,8 @@ import Post from "../../models/Post.js";
 /**
  * Create a new post
  */
-
-export const createPost = async (userId, description, imagePaths) => {
-  const post = new Post({
-    userId,
-    description,
-    images: imagePaths?.length ? imagePaths : null,
-  });
-
+export const createPost = async (userId, description, images = []) => {
+  const post = new Post({ userId, description, images });
   await post.save();
   // Re-fetch with populated userId
   const populatedPost = await Post.findById(post._id)
@@ -20,6 +14,7 @@ export const createPost = async (userId, description, imagePaths) => {
 
   return populatedPost;
 };
+
 /**
  * Get all posts with user info and comments populated
  */
@@ -37,6 +32,7 @@ export const getAllPosts = async () => {
 
   return posts;
 };
+
 export const deletePost = async (postId, userId) => {
   const post = await Post.findById(postId);
 
@@ -52,6 +48,7 @@ export const deletePost = async (postId, userId) => {
   await post.deleteOne();
   return { success: true, message: "Post deleted successfully" };
 };
+
 /**
  * Toggle like/unlike for a post by user
  */
@@ -78,6 +75,7 @@ export const toggleLike = async (postId, userId) => {
   const updatedPost = await Post.findById(post._id)
     .populate("userId", "name image")
     .lean();
+
 
   return {
     success: true,

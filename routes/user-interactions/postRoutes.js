@@ -1,8 +1,7 @@
-
 import express from "express";
 import { createPost, deletePost, getPosts, likePost } from "../../controllers/user-interactions/postController.js";
 import { authMiddleware } from "../../middlewares/authMiddleware.js";
-import {  upload} from "../../middlewares/upload.js"; // Multer config
+import {  uploadMemory } from "../../middlewares/upload.js"; // Multer config
 import { body } from "express-validator";
 import { validateInput } from "../../middlewares/validateInput.js";
 
@@ -13,7 +12,7 @@ router.get("/", getPosts);
 router.post(
   "/",
   authMiddleware,
-  upload.array("images", 5), // max 5 images
+  uploadMemory.array("images", 5), // max 5 images
   body("description").notEmpty().withMessage("Description is required"),
   validateInput,
   createPost
