@@ -56,10 +56,11 @@ app.get("/", (req, res) => {
 // app.use("/uploads", express.static(path.resolve("uploads")));
 app.use('/auth', authRoutes);
 app.use('/auth/admin',adminAuthRouter);
-app.use('/admin', adminRouter);
-
 // admin place curd
 app.use('/admin/place', adminPlaceRoutes); 
+app.use("/admin/stats", adminStatsRoutes);
+app.use('/admin', adminRouter);
+
 // [MODIFIED] /places/suggested endpoint is now available for both anonymous and registered users
 // favourite routes
 app.use("/places", favouriteRoutes);
@@ -90,7 +91,6 @@ app.use("/assestant", assistantRouter);
 
 app.use("/categories", categoryRouter);
 
-app.use("/admin/stats", adminStatsRoutes);
 app.use('/realTimeRecomendation',realTimeRouter);
 
 app.use("/guide/request", guideRequestRouter);
