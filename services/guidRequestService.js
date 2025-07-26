@@ -69,7 +69,9 @@ export const updateRequestStatusService = async (requestId, guideId, status, pri
     if (!request.guide.equals(guideObjectId)) {
         throw new Error('Not authorized to modify this request');
     }
-
+    if (request.status === 'approved' && status !== 'rejected') {
+        throw new Error('Cannot change status from approved to anything else');
+    }
     if (!['approved', 'rejected'].includes(status)) {
         throw new Error('Invalid status update');
     }
