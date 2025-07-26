@@ -19,6 +19,8 @@ export const handleSearchPlaces = async (req, res) => {
   }
 };
 
+
+
 // /places/top
 export const handleGetTopPlaces = async (req, res) => {
   try {
