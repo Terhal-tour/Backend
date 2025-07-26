@@ -68,7 +68,7 @@ export const verifyEmail = async (req, res) => {
 
     res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
-     res.status(500).json({ message: 'Internal Server Error', error: err.message });
+     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 };
 
@@ -103,7 +103,7 @@ export const login = async (req, res) => {
         image: user.image
       }
     });
-  } catch (err) {
+  } catch (error) {
         res.status(500).json({ message: 'Internal Server Error', error: err.message });
 
   }
@@ -116,7 +116,7 @@ export const forgetPassword = async (req, res) => {
     const message = await handleForgetPassword(req.body.email);
     res.status(200).json({ message });
   } catch (error) {
-        res.status(500).json({ message: 'Internal Server Error', error: err.message });
+        res.status(500).json({ message: 'Internal Server Error', error: error.message });
 
   }
 };
