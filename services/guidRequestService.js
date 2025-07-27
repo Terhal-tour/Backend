@@ -1,5 +1,8 @@
 import GuideRequest from '../models/GuideRequest.js';
 import User from '../models/User.js';
+import mongoose from 'mongoose';
+
+const { ObjectId } = mongoose.Types;
 
 export const createGuideRequestService = async (guideId, userId, data) => {
     const { message, date, duration } = data;
@@ -55,17 +58,25 @@ export const getRequestsByGuideService = async (guideId) => {
     return await GuideRequest.find({ guide: guideId }).sort({ createdAt: -1 });
 };
 
-export const updateRequestStatusService = async (requestId, guideId, status) => {
+export const updateRequestStatusService = async (requestId, guideId, status, price) => {
     const request = await GuideRequest.findById(requestId);
     if (!request) throw new Error('Request not found');
-    if (!request.guide.equals(guideId)) {
+    
+    const guideObjectId = typeof guideId === 'string' ? new ObjectId(guideId) : guideId;
+
+    console.log('Comparing:', request.guide.toString(), guideObjectId.toString());
+
+    if (!request.guide.equals(guideObjectId)) {
         throw new Error('Not authorized to modify this request');
     }
-
+    if (request.status === 'approved' && status !== 'rejected') {
+        throw new Error('Cannot change status from approved to anything else');
+    }
     if (!['approved', 'rejected'].includes(status)) {
         throw new Error('Invalid status update');
     }
 
     request.status = status;
+    request.price = price;
     return await request.save();
 };

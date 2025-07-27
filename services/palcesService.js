@@ -1,23 +1,30 @@
 import History from "../models/History.js";
 import Place from "../models/Place.js";
 
-export const searchPlaces = async (query) => {
 
+// export const searchPlaces = async (query) => {
+
+//   const regex = new RegExp(query, "i");
+
+//   // Find all visible places where the keyword matches one of these fields
+//   return await Place.find({
+//     visible: true, // Only return places marked as visible (not deleted)
+//     $or: [
+//       { name: regex }, //how to make it like  [TODO]   Mosque El Appasi    mosque elabasi       
+//       { description: regex }, 
+//       { address: regex },    
+//     ],
+//   })
+//   .populate("category"); // Replace category ObjectId with full category data
+// };
+export const searchPlaces = async (query) => {
   const regex = new RegExp(query, "i");
 
-  // Find all visible places where the keyword matches one of these fields
   return await Place.find({
-    visible: true, // Only return places marked as visible (not deleted)
-    $or: [
-      { name: regex },        
-      { description: regex }, 
-      { location: regex },    
-      { address: regex },    
-    ],
-  })
-  .populate("category"); // Replace category ObjectId with full category data
+    visible: true,
+    name: regex,
+  }).populate("category");
 };
-
 
 
 
@@ -92,10 +99,10 @@ export const getPlaces = async (query) => {
   const limit = parseInt(query.limit) || 10;
   const skip = (page - 1) * limit;
 
-  const filter = { visible: true }; 
+  const filter = { visible: true };
 
   const places = await Place.find(filter).skip(skip).limit(limit);
-  const total = await Place.countDocuments(filter); 
+  const total = await Place.countDocuments(filter);
 
   return {
     currentPage: page,

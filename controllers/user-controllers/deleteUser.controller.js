@@ -10,8 +10,11 @@ export const deleteUserAccount = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Password is required.' });
     }
 
-    await softDeleteUser(userId, password, userId); // Acting user is the same user
-
+    const user = await softDeleteUser(userId, password, userId); // Acting user is the same user
+    if (!user) {
+      res.status(404).json({ success: false, message: 'User already deleted.' });
+      return;
+    }
     res.json({ success: true, message: 'Account has been deactivated.' });
   } catch (err) {
     res.status(400).json({ success: false, message: err.message });
@@ -28,7 +31,7 @@ export const reactivateUserAccount = async (req, res) => {
     }
 
     const user = await reactivateUser(email, password);
-console.log("user",user);
+    console.log("user", user);
 
     res.json({ success: true, message: 'Account has been reactivated.' });
   } catch (err) {

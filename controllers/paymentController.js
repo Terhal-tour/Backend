@@ -1,23 +1,55 @@
-// controllers/payment.controller.js
-import { createStripeCheckoutSession } from "../services/paymentService.js";
+import Stripe from "stripe";
+import {
+  createCheckoutSession,
+  handleStripeWebhook,
+  getGuidePaymentsService,
+} from "../services/paymentService.js";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 /**
- * Handle donation checkout session creation.
- * POST /payment/checkout
+ * Create Stripe session URL and return to frontend
  */
-export const handleCreateCheckoutSession = async (req, res) => {
+export const createPayment = async (req, res) => {
   try {
-    const { amount } = req.body;
+    const url = await createCheckoutSession(req.params.guideRequestId, req.user);
+    res.json({ url });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-    if (!amount || amount < 1) {
-      return res.status(400).json({ message: "Invalid donation amount." });
-    }
+/**
+ * Stripe webhook endpoint
+ */
+export const stripeWebhook = async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
 
-    const sessionUrl = await createStripeCheckoutSession(amount);
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+    await handleStripeWebhook(event);
+    res.json({ received: true });
+  } catch (err) {
+    console.error("Webhook error:", err.message);
+    res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+};
 
-    res.status(200).json({ url: sessionUrl });
+/**
+ * Get all paid payments for the logged-in guide and total earnings
+ */
+export const getGuidePayments = async (req, res) => {
+  try {
+    const guideId = req.user.id; // Logged-in guide ID
+    const { payments, totalEarnings } = await getGuidePaymentsService(guideId);
+
+    res.status(200).json({
+      payments,
+      totalEarnings,
+    });
   } catch (error) {
-    console.error("Stripe Payment Error:", error);
-    res.status(500).json({ message: "Payment session creation failed." });
+    console.error("Error getting guide payments:", error);
+    res.status(500).json({ error: error.message });
   }
 };

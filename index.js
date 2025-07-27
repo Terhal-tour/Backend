@@ -27,20 +27,26 @@ import categoryRouter from './routes/categoryRoutes.js';
 import adminPlaceRoutes from './routes/adminPlaceRoutes.js';
 import adminStatsRoutes from "./routes/adminStats.routes.js";
 import { initUserSocket } from "./sockets/userSocket.js";
-import paymentRoutes from "./routes/paymentRoutes.js";
 import { realTimeRouter } from "./routes/RealTimeRoutes.js";
 import { guideRouter } from "./routes/GuideRouter.js";
 import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
+import paymentRoutes from "./routes/paymentRoutes.js"
+import supportusRoutes  from "./routes/supportusRoutes.js"
 
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
-import  randomPlaceRoute  from './routes/RandomPlaceRoute.js'
+
 
 
 dotenv.config();
 
 const app = express();
 const port = 3000;
+
+//  app.use(express.json()) لازم تيجي دي قبل 
+//  Stripe webhook must be raw
+app.use("/payments/webhook", express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(cors());
 app.use("/uploads", express.static("uploads"));
@@ -50,10 +56,11 @@ app.get("/", (req, res) => {
 // app.use("/uploads", express.static(path.resolve("uploads")));
 app.use('/auth', authRoutes);
 app.use('/auth/admin',adminAuthRouter);
-app.use('/admin', adminRouter);
-
 // admin place curd
 app.use('/admin/place', adminPlaceRoutes); 
+app.use("/admin/stats", adminStatsRoutes);
+app.use('/admin', adminRouter);
+
 // [MODIFIED] /places/suggested endpoint is now available for both anonymous and registered users
 // favourite routes
 app.use("/places", favouriteRoutes);
@@ -73,16 +80,17 @@ app.use("/user", historyRoutes);
 app.use("/user", deleteRoutes);
 app.use("/user", favoriteRoutes);
 app.use("/user/reviews", reviewRoutes);
-//random place route
-app.use("/randomplaces",randomPlaceRoute)
-// payment routes
-app.use("/payment", paymentRoutes);
+
+// payment
+app.use("/payments", paymentRoutes);
+
+// support us routes
+app.use("/supportus", supportusRoutes);
 
 app.use("/assestant", assistantRouter);
 
 app.use("/categories", categoryRouter);
 
-app.use("/admin/stats", adminStatsRoutes);
 app.use('/realTimeRecomendation',realTimeRouter);
 
 app.use("/guide/request", guideRequestRouter);

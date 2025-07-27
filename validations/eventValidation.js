@@ -23,15 +23,32 @@ export const createEventValidation = [
 
   body('coordinates')
     .notEmpty().withMessage('coordinates required')
-    .isString().withMessage('coordinates must be string'),
+    .matches(/^[-+]?[0-9]*\.?[0-9]+,[-+]?[0-9]*\.?[0-9]+$/)
+    .withMessage('coordinates must be in "lat,lng" format'),
 
   body('startTime')
     .notEmpty().withMessage('start time is required')
-    .isString().withMessage('start time must be string'),
+    .isISO8601().withMessage('start time must be a valid ISO 8601 date')
+    .custom((value) => {
+      const start = new Date(value);
+      const now = new Date();
+      if (start < now) {
+        throw new Error('start time cannot be in the past');
+      }
+      return true;
+    }),
 
   body('endTime')
     .notEmpty().withMessage('end time is required')
-    .isString().withMessage('end time must be string'),
+    .isISO8601().withMessage('end time must be a valid ISO 8601 date')
+    .custom((value, { req }) => {
+      const start = new Date(req.body.startTime);
+      const end = new Date(value);
+      if (end <= start) {
+        throw new Error('end time must be after start time');
+      }
+      return true;
+    }),
 ];
 
 export const updateEventValidation = [
@@ -57,13 +74,29 @@ export const updateEventValidation = [
 
   body('coordinates')
     .optional()
-    .isString().withMessage('coordinates must be string'),
-
+    .matches(/^[-+]?[0-9]*\.?[0-9]+,[-+]?[0-9]*\.?[0-9]+$/)
+    .withMessage('coordinates must be in "lat,lng" format'),
   body('startTime')
     .optional()
-    .isString().withMessage('start time must be string'),
+    .isISO8601().withMessage('start time must be a valid ISO 8601 date')
+    .custom((value) => {
+      const start = new Date(value);
+      const now = new Date();
+      if (start < now) {
+        throw new Error('start time cannot be in the past');
+      }
+      return true;
+    }), 
 
   body('endTime')
     .optional()
-    .isString().withMessage('end time must be string'),
+    .isISO8601().withMessage('end time must be a valid ISO 8601 date')
+    .custom((value, { req }) => {
+      const start = new Date(req.body.startTime);
+      const end = new Date(value);
+      if (end <= start) {
+        throw new Error('end time must be after start time');
+      }
+      return true;
+    }),
 ];
