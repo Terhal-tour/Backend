@@ -107,7 +107,7 @@ app.use("/messages", messageRoute);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // React app
+    origin: "https://v1-ashy-alpha.vercel.app", // React app
     methods: ["GET", "POST"]
   }
 });
