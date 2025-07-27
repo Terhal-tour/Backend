@@ -5,19 +5,65 @@ import { getPlacesNearby } from "../services/palcesService.js"; // [MODIFIED] Im
 import User from "../models/User.js"; // [MODIFIED] Import User model for fetching user data
 
 // /places/search?q=...
+// export const handleSearchPlaces = async (req, res) => {
+//   try {
+//     const query = req.query.q;
+//     if (!query) {
+//       return res.status(400).json({ message: "Search query is required." });
+//     }
+
+//     const places = await searchPlaces(query);
+//     res.status(200).json(places);
+//   } catch (err) {
+//     res.status(500).json({ error: "Something went wrong", details: err.message });
+//   }
+// };
+
+// export const handleSearchPlaces = async (req, res) => {
+//   try {
+//     const query = req.query.q;
+//     if (!query) {
+//       return res.status(400).json({ message: "Search query is required." });
+//     }
+
+//     const places = await searchPlaces(query);
+
+//     if (places.length === 0) {
+//       return res.status(200).json({ message: "No places found.", places: [] });
+//     }
+
+//     res.status(200).json({ places });
+//   } catch (err) {
+//     res.status(500).json({ error: "Something went wrong", details: err.message });
+//   }
+// };
 export const handleSearchPlaces = async (req, res) => {
   try {
     const query = req.query.q;
+
     if (!query) {
       return res.status(400).json({ message: "Search query is required." });
     }
 
     const places = await searchPlaces(query);
-    res.status(200).json(places);
+
+    if (!places || places.length === 0) {
+      return res.status(200).json({
+        message: "No places found matching your search.",
+        places: [],
+      });
+    }
+
+    res.status(200).json({ places }); // Return result with key `places` for consistency
   } catch (err) {
-    res.status(500).json({ error: "Something went wrong", details: err.message });
+    res.status(500).json({
+      error: "Something went wrong",
+      details: err.message,
+    });
   }
 };
+
+
 
 
 
