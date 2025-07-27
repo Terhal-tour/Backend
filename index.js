@@ -35,7 +35,7 @@ import supportusRoutes  from "./routes/supportusRoutes.js"
 
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
-
+import  randomPlacesRoute  from './routes/RandomPlaceRoute.js'
 
 
 dotenv.config();
@@ -80,6 +80,12 @@ app.use("/user", historyRoutes);
 app.use("/user", deleteRoutes);
 app.use("/user", favoriteRoutes);
 app.use("/user/reviews", reviewRoutes);
+
+//random place route
+app.use("/randomplaces",randomPlacesRoute)
+// payment routes
+app.use("/payment", paymentRoutes);
+
 
 // payment
 app.use("/payments", paymentRoutes);
