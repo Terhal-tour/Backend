@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 
 import http from "http";
 import cors from "cors";
-import { Server } from "socket.io";
 import redisClient from "./lib/redisClient.js";
 
 
@@ -36,10 +35,12 @@ import supportusRoutes  from "./routes/supportusRoutes.js"
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
 import  randomPlacesRoute  from './routes/RandomPlaceRoute.js'
+import { messageHandler } from "./sockets/messageHandler.js";
+import messageRoute from "./routes/messagesRoute.js";
+import { Server } from 'socket.io';
 
 
 dotenv.config();
-
 const app = express();
 const port = 3000;
 
@@ -102,12 +103,35 @@ app.use("/guide", guideRouter);
 
 app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);
+app.use("/messages", messageRoute);
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: {
+    origin: "http://localhost:5173", // React app
+    methods: ["GET", "POST"]
+  }
 });
 
-initUserSocket(io);
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("register", (userId) => {
+    console.log("✅ Registered user:", userId);
+    onlineUsers.set(userId, socket.id);
+    console.log("📌 All online users:", onlineUsers);
+  });
+
+  socket.on("error", (err) => {
+    console.error("Socket error:", err);
+  });
+
+  socket.on("connect_error", (err) => {
+    console.error("Socket connect error:", err.message);
+  });
+
+  messageHandler(io, socket);
+  initUserSocket(io, socket);
+});
 
 console.log("MONGO_URI =", process.env.MONGO_URI);
 
@@ -121,7 +145,23 @@ console.log("MONGO_URI =", process.env.MONGO_URI);
 //   .catch((err) => {
 //     console.error('MongoDB connection error:', err);
 //   });
+const onlineUsers = new Map(); 
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+ socket.on("register", (userId) => {
+    console.log("✅ Registered user:", userId);
+    onlineUsers.set(userId, socket.id);
+  });
+  socket.on("error", (err) => {
+    console.error("Socket error:", err);
+  });
 
+  socket.on("connect_error", (err) => {
+    console.error("Socket connect error:", err.message);
+  });
+   messageHandler(io, socket);
+  initUserSocket(io, socket);
+});
 
 (async () => {
   try {
