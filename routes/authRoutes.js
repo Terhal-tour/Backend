@@ -13,7 +13,9 @@ router.post(
     body("email").isEmail().withMessage("Valid email is required"),
     body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
     body("mobile").notEmpty().withMessage("Mobile is required"),
-    body("nationality").notEmpty().withMessage("Nationality is required"),
+     body("nationality")
+    .notEmpty().withMessage("Nationality is required")
+    .matches(/^[A-Za-z\s]+$/).withMessage("Nationality must contain letters only"),
     body("language").isIn(["AR", "EN"]).withMessage("Language must be AR or EN"),
   ],
   validateInput,

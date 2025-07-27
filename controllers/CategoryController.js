@@ -1,4 +1,5 @@
 import { addCategory, editCategory, getCategories, getCategory, removeCategory } from "../services/categoryService.js";
+import Category from "../models/Category.js";
 
 export const getAllCategories = async (req, res) => {
     try {
@@ -48,14 +49,22 @@ export const createCategory = async (req, res) => {
             return res.status(401).json({ message: "You need to login first" });
         }
 
-        const categoryData = req.body;
-        const category = await addCategory({ ...categoryData, createdBy: userId }); // add createdBy if needed
+        const { title } = req.body;
+
+        // Check if category already exists
+        const existingCategory = await Category.findOne({ title: title.trim() });
+        if (existingCategory) {
+            return res.status(400).json({ message: "Category already exists" });
+        }
+
+        const category = await addCategory({ title: title.trim(), createdBy: userId });
 
         res.status(201).json(category);
-    } catch (error) {
+    } catch (err) {
         res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
 };
+
 
 export const updateCategory = async (req, res) => {
     try {
