@@ -1,0 +1,132 @@
+// utils/normalizeNationality.js
+
+// A mapping of ISO alpha-2 country codes + common variants to nationality names
+const nationalityMap = {
+  // Egypt variants
+  EG:"Egyption",
+  eg: "Egyptian",
+  egy: "Egyptian",
+  egyptian: "Egyptian",
+  egyption: "Egyptian",
+  egpytian: "Egyptian",
+
+  // UK variants
+  gb: "British",
+  uk: "British",
+  british: "British",
+
+  // USA variants
+  us: "American",
+  usa: "American",
+  american: "American",
+
+  // ISO standard codes mapped to nationalities
+  af: "Afghan",
+  al: "Albanian",
+  dz: "Algerian",
+  ao: "Angolan",
+  ar: "Argentine",
+  au: "Australian",
+  at: "Austrian",
+  az: "Azerbaijani",
+  bh: "Bahraini",
+  bd: "Bangladeshi",
+  be: "Belgian",
+  bo: "Bolivian",
+  ba: "Bosnian or Herzegovinian",
+  br: "Brazilian",
+  bg: "Bulgarian",
+  cm: "Cameroonian",
+  ca: "Canadian",
+  cl: "Chilean",
+  cn: "Chinese",
+  co: "Colombian",
+  hr: "Croatian",
+  cy: "Cypriot",
+  cz: "Czech",
+  dk: "Danish",
+  eg: "Egyptian",
+  ee: "Estonian",
+  et: "Ethiopian",
+  fi: "Finnish",
+  fr: "French",
+  ge: "Georgian",
+  de: "German",
+  gh: "Ghanaian",
+  gr: "Greek",
+  hk: "Hong Konger",
+  hu: "Hungarian",
+  is: "Icelander",
+  in: "Indian",
+  id: "Indonesian",
+  ir: "Iranian",
+  iq: "Iraqi",
+  ie: "Irish",
+  il: "Israeli",
+  it: "Italian",
+  jp: "Japanese",
+  jo: "Jordanian",
+  ke: "Kenyan",
+  kw: "Kuwaiti",
+  lb: "Lebanese",
+  ly: "Libyan",
+  lt: "Lithuanian",
+  lu: "Luxembourgish",
+  my: "Malaysian",
+  mx: "Mexican",
+  ma: "Moroccan",
+  mm: "Burmese",
+  nl: "Dutch",
+  nz: "New Zealander",
+  ng: "Nigerian",
+  no: "Norwegian",
+  om: "Omani",
+  pk: "Pakistani",
+  ps: "Palestinian",
+  pa: "Panamanian",
+  pe: "Peruvian",
+  ph: "Filipino",
+  pl: "Polish",
+  pt: "Portuguese",
+  qa: "Qatari",
+  ro: "Romanian",
+  ru: "Russian",
+  sa: "Saudi Arabian",
+  rs: "Serbian",
+  sg: "Singaporean",
+  sk: "Slovak",
+  si: "Slovenian",
+  so: "Somali",
+  za: "South African",
+  es: "Spanish",
+  lk: "Sri Lankan",
+  sd: "Sudanese",
+  se: "Swedish",
+  ch: "Swiss",
+  sy: "Syrian",
+  th: "Thai",
+  tn: "Tunisian",
+  tr: "Turkish",
+  ua: "Ukrainian",
+  ae: "Emirati",
+  gb: "British",
+  us: "American",
+  ve: "Venezuelan",
+  vn: "Vietnamese",
+  ye: "Yemeni",
+  zm: "Zambian",
+  zw: "Zimbabwean",
+};
+
+/**
+ * Normalize a nationality value to a single standard string
+ * @param {string} nationality
+ * @returns {string} standardized nationality or "Other"
+ */
+export function normalizeNationality(nationality) {
+  if (!nationality || typeof nationality !== "string") return "Other";
+
+  const cleaned = nationality.trim().toLowerCase();
+
+  return nationalityMap[cleaned] || "Other";
+}
