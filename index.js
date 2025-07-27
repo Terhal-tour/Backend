@@ -83,9 +83,6 @@ app.use("/user/reviews", reviewRoutes);
 
 //random place route
 app.use("/randomplaces",randomPlacesRoute)
-// payment routes
-app.use("/payment", paymentRoutes);
-
 
 // payment
 app.use("/payments", paymentRoutes);
