@@ -2,22 +2,29 @@ import History from "../models/History.js";
 import Place from "../models/Place.js";
 
 
-export const searchPlaces = async (query) => {
+// export const searchPlaces = async (query) => {
 
+//   const regex = new RegExp(query, "i");
+
+//   // Find all visible places where the keyword matches one of these fields
+//   return await Place.find({
+//     visible: true, // Only return places marked as visible (not deleted)
+//     $or: [
+//       { name: regex }, //how to make it like  [TODO]   Mosque El Appasi    mosque elabasi       
+//       { description: regex }, 
+//       { address: regex },    
+//     ],
+//   })
+//   .populate("category"); // Replace category ObjectId with full category data
+// };
+export const searchPlaces = async (query) => {
   const regex = new RegExp(query, "i");
 
-  // Find all visible places where the keyword matches one of these fields
   return await Place.find({
-    visible: true, // Only return places marked as visible (not deleted)
-    $or: [
-      { name: regex }, //how to make it like  [TODO]   Mosque El Appasi    mosque elabasi       
-      { description: regex }, 
-      { address: regex },    
-    ],
-  })
-  .populate("category"); // Replace category ObjectId with full category data
+    visible: true,
+    name: regex,
+  }).populate("category");
 };
-
 
 
 
