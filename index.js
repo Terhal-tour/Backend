@@ -32,7 +32,7 @@ import { guideRouter } from "./routes/GuideRouter.js";
 import { guideRequestRouter } from "./routes/GuideRequestRouter.js";
 import paymentRoutes from "./routes/paymentRoutes.js"
 import supportusRoutes  from "./routes/supportusRoutes.js"
-
+import RandomplaceRoutes from "./routes/RandomPlacesRoute.js"
 import postRoutes from './routes/user-interactions/postRoutes.js';
 import commentsRoutes from './routes/user-interactions/commentRoutes.js';
 
@@ -96,6 +96,8 @@ app.use('/realTimeRecomendation',realTimeRouter);
 app.use("/guide/request", guideRequestRouter);
 app.use("/guide", guideRouter);
 
+//Random places
+app.use('/RanPlaces', RandomplaceRoutes);
 
 app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);
