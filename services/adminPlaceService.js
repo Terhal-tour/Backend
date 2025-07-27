@@ -4,17 +4,47 @@ import Place from "../models/Place.js";
 
 
 
-// Service function to create a new place
+ // Service function to create a new place
+// export const createPlace = async (placeData) => {
+//   const place = new Place(placeData);
+//   return await place.save();
+// };
+
+
+
 export const createPlace = async (placeData) => {
+  const { name, address, category } = placeData;
+
+  const existingPlace = await Place.findOne({ name, address, category });
+  if (existingPlace) {
+    const error = new Error("Place already exists");
+    error.statusCode = 400;
+    throw error;
+  }
+
   const place = new Place(placeData);
   return await place.save();
 };
 
 // Service function to update an existing place by ID
+// export const updatePlace = async (id, updateData) => {
+//   const place = await Place.findByIdAndUpdate(id, updateData, { new: true });
+//   return place;
+// };
+
 export const updatePlace = async (id, updateData) => {
   const place = await Place.findByIdAndUpdate(id, updateData, { new: true });
+
+  if (!place) {
+    const error = new Error("Place not found");
+    error.statusCode = 400; // tell controller this is a handled, known error
+    throw error;
+  }
+
   return place;
 };
+
+
 
 // Service function to toggle the visibility of a place by ID
 export const togglePlaceVisibility = async (id) => {

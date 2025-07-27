@@ -26,7 +26,7 @@ const placeSchema = new mongoose.Schema({
 }, {
   timestamps: true, // optional: adds createdAt, updatedAt
 });
-
+placeSchema.index({ name: 1, address: 1, category: 1 }, { unique: true });
 const Place = mongoose.model('Place', placeSchema);
 
 export default Place;
