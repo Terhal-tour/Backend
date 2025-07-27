@@ -17,13 +17,46 @@ import Place from "../models/Place.js";
 //   })
 //   .populate("category"); // Replace category ObjectId with full category data
 // };
-export const searchPlaces = async (query) => {
-  const regex = new RegExp(query, "i");
+// export const searchPlaces = async (query) => {
+//   const regex = new RegExp(query, "i");
 
-  return await Place.find({
-    visible: true,
-    name: regex,
-  }).populate("category");
+//   return await Place.find({
+//     visible: true,
+//     name: regex,
+//   }).populate("category");
+// };
+
+
+export const searchPlaces = async (query) => {
+  if (typeof query !== "string" || query.trim().length < 2) {
+    return [];
+  }
+
+  const cleaned = query.trim();
+
+  // First: Try MongoDB full-text search
+  let places = await Place.find(
+    {
+      visible: true,
+      $text: { $search: cleaned },
+    },
+    {
+      score: { $meta: "textScore" },
+    }
+  )
+    .sort({ score: { $meta: "textScore" } })
+    .populate("category");
+
+  // Fallback: If no results, try loose regex match
+  if (places.length === 0) {
+    const regex = new RegExp(cleaned, "i");
+    places = await Place.find({
+      visible: true,
+      name: regex,
+    }).populate("category");
+  }
+
+  return places;
 };
 
 
