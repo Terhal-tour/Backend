@@ -74,23 +74,26 @@ export const createCommentController = async (req, res) => {
     res.status(500).json({ message: err.message || "Server error" });
   }
 };
-
 export const getCommentsController = async (req, res) => {
   try {
     const { postId } = req.query;
-    const comments = await getComments(postId);
 
-    // Optional: populate user name for all comments
-    const populated = await Comment.find({ postId })
-      .populate("userId", "name")
+    const filter = {};
+    if (postId) {
+      filter.postId = postId;
+    }
+
+    const comments = await Comment.find(filter)
+      .populate("userId", "name image") // populate user fields (as needed)
       .sort({ createdAt: -1 });
 
-    res.json(populated);
+    res.json(comments);
   } catch (err) {
-    console.error(err);
+    console.error("Error fetching comments:", err);
     res.status(500).json({ message: err.message || "Server error" });
   }
 };
+
 
 export const deleteCommentController = async (req, res) => {
   try {
