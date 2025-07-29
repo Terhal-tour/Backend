@@ -66,7 +66,6 @@ const userSchema = new mongoose.Schema({
   role: {
     type: String,
     enum: ['traveler', 'guide'],
-    default: 'traveler',
   },
 
   isVerified: { type: Boolean, default: false },
