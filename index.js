@@ -8,6 +8,9 @@ import http from "http";
 import cors from "cors";
 import redisClient from "./lib/redisClient.js";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swagger.js";
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css";
 
 import authRoutes from "./routes/authRoutes.js";
 import profileRoute from "./routes/profileRoutes.js";
@@ -104,6 +107,19 @@ app.use("/guide", guideRouter);
 app.use("/posts", postRoutes);
 app.use("/comments", commentsRoutes);
 app.use("/messages", messageRoute);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCssUrl: CSS_URL,
+    customJs: [
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.min.js',
+    ],
+  })
+);
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {

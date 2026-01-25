@@ -1,51 +1,174 @@
 import express from "express";
-import { register, login } from "../controllers/authController.js";
+import { register, login, forgetPassword, resetPassword, verifyEmail } from "../controllers/authController.js";
 import { validateInput } from "../middlewares/validateInput.js";
-import { forgetPassword, resetPassword ,verifyEmail} from "../controllers/authController.js";
 import { body } from "express-validator";
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Auth
+ *   description: Authentication APIs
+ */
+
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - mobile
+ *               - nationality
+ *               - language
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               mobile:
+ *                 type: string
+ *               nationality:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *                 enum: [AR, EN]
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ */
 router.post(
   "/register",
   [
-    body("name").notEmpty().withMessage("Name is required"),
-    body("email").isEmail().withMessage("Valid email is required"),
-    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
-    body("mobile").notEmpty().withMessage("Mobile is required"),
-    body("nationality").notEmpty().withMessage("Nationality is required"),
-    body("language").isIn(["AR", "EN"]).withMessage("Language must be AR or EN"),
+    body("name").notEmpty(),
+    body("email").isEmail(),
+    body("password").isLength({ min: 6 }),
+    body("mobile").notEmpty(),
+    body("nationality").notEmpty(),
+    body("language").isIn(["AR", "EN"]),
   ],
   validateInput,
   register
 );
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: User login
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, password]
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Valid email is required"),
-    body("password").notEmpty().withMessage("Password is required"),
+    body("email").isEmail(),
+    body("password").notEmpty(),
   ],
   validateInput,
   login
 );
-// Handle forget password
+
+/**
+ * @swagger
+ * /auth/forgetPassword:
+ *   post:
+ *     summary: Send password reset email
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset email sent
+ */
 router.post(
   "/forgetPassword",
-  [body("email").isEmail().withMessage("Valid email is required")],
+  [body("email").isEmail()],
   validateInput,
   forgetPassword
 );
+
+/**
+ * @swagger
+ * /auth/verify-email/{token}:
+ *   post:
+ *     summary: Verify user email
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Email verified successfully
+ */
 router.post("/verify-email/:token", verifyEmail);
-// Handle reset password
+
+/**
+ * @swagger
+ * /auth/resetPassword:
+ *   post:
+ *     summary: Reset user password
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [token, password]
+ *             properties:
+ *               token:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset successfully
+ */
 router.post(
   "/resetPassword",
   [
-    
-       body("password").notEmpty().withMessage("Password is required"),
+    body("password").notEmpty(),
   ],
   validateInput,
   resetPassword
-);  
-export default router;
+);
 
+export default router;

@@ -1,4 +1,3 @@
-// routes/adminPlaceRoutes.js
 import express from 'express';
 import {
   createPlace,
@@ -13,14 +12,114 @@ import { validateInput } from '../middlewares/validateInput.js';
 
 const router = express.Router();
 
-router.get('/',authMiddleware,isAdmin,getadminPlaces);
-// Route for creating a new place
-router.post('/',authMiddleware, isAdmin, createPlaceValidation, validateInput, createPlace);
+/**
+ * @swagger
+ * tags:
+ *   name: Admin Places
+ *   description: Admin operations for places
+ */
 
-// Route for updating a place by ID
-router.put('/:id',authMiddleware, isAdmin, updatePlaceValidation, validateInput, updatePlace);
+/**
+ * @swagger
+ * /admin/places:
+ *   get:
+ *     summary: Get all places (Admin only)
+ *     tags: [Admin Places]
+ *     responses:
+ *       200:
+ *         description: List of places
+ */
+router.get('/', authMiddleware, isAdmin, getadminPlaces);
 
-// Route for toggling visibility (soft delete) of a place
-router.put('/:id/visibility',authMiddleware, isAdmin, toggleVisibility);
+/**
+ * @swagger
+ * /admin/places:
+ *   post:
+ *     summary: Create a new place (Admin only)
+ *     tags: [Admin Places]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [name, location, description]
+ *             properties:
+ *               name:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Place created successfully
+ */
+router.post(
+  '/',
+  authMiddleware,
+  isAdmin,
+  createPlaceValidation,
+  validateInput,
+  createPlace
+);
+
+/**
+ * @swagger
+ * /admin/places/{id}:
+ *   put:
+ *     summary: Update a place by ID (Admin only)
+ *     tags: [Admin Places]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Place ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               location:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Place updated successfully
+ */
+router.put(
+  '/:id',
+  authMiddleware,
+  isAdmin,
+  updatePlaceValidation,
+  validateInput,
+  updatePlace
+);
+
+/**
+ * @swagger
+ * /admin/places/{id}/visibility:
+ *   put:
+ *     summary: Toggle visibility of a place (Admin only)
+ *     tags: [Admin Places]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Place ID
+ *     responses:
+ *       200:
+ *         description: Place visibility toggled successfully
+ */
+router.put('/:id/visibility', authMiddleware, isAdmin, toggleVisibility);
 
 export default router;
